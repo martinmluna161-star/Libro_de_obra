@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libro Diario de Obra — Sanchez Gil +arquitectura</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --naranja: #F5A800;
+    --naranja-oscuro: #E08000;
+    --naranja-claro: #FFD166;
+    --negro: #1A1A1A;
+    --gris-oscuro: #2E2E2E;
+    --gris-medio: #5A5A5A;
+    --gris-claro: #E8E8E8;
+    --blanco: #FAFAFA;
+    --fondo: #F4F0EB;
+    --radio: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--fondo); color: var(--negro); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header { background: var(--negro); display: flex; align-items: stretch; border-bottom: 4px solid var(--naranja); }
+  .header-logo { background: var(--naranja); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .brand-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--negro); line-height: 1; }
+  .brand-sub { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--negro); margin-top: 2px; }
+  .header-title { padding: 16px 28px; display: flex; flex-direction: column; justify-content: center; }
+  .header-title h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.5rem; color: white; text-transform: uppercase; letter-spacing: 0.03em; }
+  .header-title span { font-size: 0.75rem; color: var(--naranja-claro); }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; padding: 0 20px; }
+
+  .btn { border: none; padding: 9px 18px; font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; border-radius: var(--radio); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.18s; white-space: nowrap; }
+  .btn-primary { background: var(--naranja); color: var(--negro); }
+  .btn-primary:hover { background: var(--naranja-oscuro); }
+  .btn-outline { background: transparent; color: var(--naranja-claro); border: 1.5px solid var(--naranja-claro); }
+  .btn-outline:hover { background: rgba(245,168,0,0.1); }
+  .btn-ghost { background: transparent; color: #666; border: 1.5px solid #444; }
+  .btn-ghost:hover { border-color: #888; color: #aaa; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── STATUS SYNC ── */
+  .sync-status {
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em;
+    transition: all 0.3s;
+  }
+  .sync-status.idle { background: rgba(255,255,255,0.05); color: #666; }
+  .sync-status.saving { background: rgba(245,168,0,0.15); color: var(--naranja-claro); }
+  .sync-status.saved { background: rgba(46,125,50,0.2); color: #81C784; }
+  .sync-status.error { background: rgba(229,62,62,0.15); color: #FC8181; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .sync-status.saving .sync-dot { animation: blink 0.8s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* ── TABS ── */
+  .tabs-bar { background: var(--negro); display: flex; border-bottom: 3px solid var(--naranja); padding: 0 28px; }
+  .tab-btn { background: none; border: none; color: #777; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 12px 20px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: all 0.18s; }
+  .tab-btn:hover { color: var(--naranja-claro); }
+  .tab-btn.active { color: var(--naranja); border-bottom-color: var(--naranja); }
+
+  /* ── MAIN ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── CARDS ── */
+  .card { background: white; border-radius: var(--radio); box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 20px; overflow: hidden; }
+  .card-header { background: var(--negro); padding: 11px 20px; display: flex; align-items: center; gap: 10px; }
+  .card-header h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.95rem; color: white; text-transform: uppercase; letter-spacing: 0.06em; }
+  .card-icon { background: var(--naranja); color: var(--negro); width: 22px; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; flex-shrink: 0; }
+  .card-body { padding: 20px; }
+
+  /* ── GRIDS / FORMS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gris-medio); }
+  input[type="text"], input[type="date"], input[type="number"], input[type="time"], input[type="email"], select, textarea {
+    border: 1.5px solid var(--gris-claro); border-radius: 4px; padding: 8px 11px;
+    font-family: 'Barlow', sans-serif; font-size: 0.88rem; color: var(--negro); background: white; width: 100%; transition: border-color 0.18s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--naranja); }
+  textarea { resize: vertical; min-height: 80px; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A5A5A' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+  /* CLIMA */
+  .clima-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .clima-opt { display: none; }
+  .clima-opt + label { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border: 1.5px solid var(--gris-claro); border-radius: 20px; cursor: pointer; font-size: 0.82rem; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--gris-medio); transition: all 0.18s; }
+  .clima-opt:checked + label { border-color: var(--naranja); color: var(--naranja-oscuro); background: rgba(245,168,0,0.08); }
+
+  /* TABLAS */
+  .tabla-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  thead tr { background: var(--gris-claro); }
+  th { padding: 8px 10px; text-align: left; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--gris-medio); }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--gris-claro); vertical-align: middle; }
+  td input, td select { border: 1px solid var(--gris-claro); border-radius: 3px; padding: 5px 7px; font-size: 0.83rem; width: 100%; }
+  td input:focus, td select:focus { border-color: var(--naranja); outline: none; }
+  .btn-add-row { margin-top: 10px; background: none; border: 1.5px dashed var(--naranja); color: var(--naranja-oscuro); padding: 6px 16px; border-radius: 4px; cursor: pointer; font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 0.82rem; transition: background 0.18s; }
+  .btn-add-row:hover { background: rgba(245,168,0,0.07); }
+  .btn-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 1rem; transition: color 0.15s; }
+  .btn-del:hover { color: #e53e3e; }
+
+  /* FOTOS */
+  .fotos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .foto-card { border: 2px dashed var(--gris-claro); border-radius: var(--radio); overflow: hidden; aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.18s; position: relative; background: var(--fondo); }
+  .foto-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .foto-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.55); padding: 4px 7px; }
+  .btn-add-foto { border: 2px dashed var(--naranja-claro); border-radius: var(--radio); aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: none; width: 100%; transition: all 0.18s; }
+  .btn-add-foto:hover { background: rgba(245,168,0,0.07); border-color: var(--naranja); }
+  .plus-icon { font-size: 1.8rem; color: var(--naranja); line-height: 1; }
+  #foto-input { display: none; }
+
+  /* AUDIO */
+  .audio-zone { border: 1.5px solid var(--gris-claro); border-radius: var(--radio); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .audio-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-record { background: var(--negro); color: white; border: none; padding: 9px 18px; border-radius: 20px; font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: all 0.18s; }
+  .btn-record:hover { background: var(--gris-oscuro); }
+  .btn-record.recording { background: #e53e3e; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(229,62,62,0.4)} 50%{box-shadow:0 0 0 8px rgba(229,62,62,0)} }
+  .rec-dot { width: 9px; height: 9px; border-radius: 50%; background: white; }
+  .audio-list { display: flex; flex-direction: column; gap: 7px; }
+  .audio-item { background: var(--fondo); border-radius: 4px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-size: 0.83rem; }
+  .audio-item audio { height: 30px; flex: 1; }
+  .transcription-box { background: var(--fondo); border-left: 3px solid var(--naranja); padding: 10px 14px; border-radius: 0 4px 4px 0; font-size: 0.85rem; color: var(--gris-oscuro); font-style: italic; display: none; }
+  .transcription-box.visible { display: block; }
+
+  /* INFO BANNER */
+  .info-banner { background: rgba(245,168,0,0.1); border-left: 4px solid var(--naranja); padding: 10px 16px; border-radius: 0 var(--radio) var(--radio) 0; font-size: 0.85rem; color: var(--gris-oscuro); margin-bottom: 18px; }
+
+  /* CONFIG PANEL */
+  .config-panel { background: #111; border: 1px solid #333; border-radius: var(--radio); padding: 16px 20px; margin-bottom: 20px; }
+  .config-panel h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; color: var(--naranja-claro); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+  .config-url { display: flex; gap: 10px; align-items: center; }
+  .config-url input { flex: 1; background: #222; border-color: #444; color: #ccc; }
+  .config-url input:focus { border-color: var(--naranja); }
+  .url-status { font-size: 0.75rem; margin-top: 6px; }
+  .url-status.ok { color: #81C784; }
+  .url-status.error { color: #FC8181; }
+  .url-status.empty { color: #666; }
+
+  /* MODAL PDF */
+  #pdf-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 999; align-items: center; justify-content: center; }
+  #pdf-overlay.show { display: flex; }
+  #pdf-box { background: white; border-radius: 8px; padding: 28px 32px; max-width: 400px; width: 90%; text-align: center; }
+  #pdf-box h3 { font-family: 'Barlow Condensed'; font-weight: 900; font-size: 1.3rem; margin-bottom: 8px; }
+  #pdf-box p { font-size: 0.85rem; color: var(--gris-medio); margin-bottom: 18px; }
+  .pdf-actions { display: flex; gap: 10px; justify-content: center; }
+
+  @media print {
+    header, .tabs-bar, .header-actions, .btn, .btn-add-row, .btn-del,
+    .btn-add-foto, .btn-record, #pdf-overlay, .info-banner, .config-panel { display: none !important; }
+    .tab-content { display: block !important; }
+    body { background: white; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+    main { padding: 0; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+      <path d="M8 36L20 24L8 12H22L34 24L22 36H8Z" fill="#1A1A1A"/>
+      <path d="M10 14L22 26V36L10 24V14Z" fill="#FFD166"/>
+      <path d="M10 14L22 14L30 22L18 22L10 14Z" fill="#E08000"/>
+      <path d="M10 36L22 36L30 26L18 26L10 36Z" fill="#F5A800"/>
+    </svg>
+    <div>
+      <div class="brand-name">Sanchez Gil</div>
+      <div class="brand-sub">+arquitectura</div>
+    </div>
+  </div>
+  <div class="header-title">
+    <h1>Libro Diario de Obra</h1>
+    <span>Carga de registros diarios</span>
+  </div>
+  <div class="header-actions">
+    <div class="sync-status idle" id="sync-status">
+      <span class="sync-dot"></span>
+      <span id="sync-text">Sin guardar</span>
+    </div>
+    <button class="btn btn-outline" onclick="guardarYSincronizar()" id="btn-guardar">💾 Guardar</button>
+    <button class="btn btn-ghost" onclick="window.open('reporte-cliente.html?proyecto=' + encodeURIComponent(document.getElementById('g-proyecto').value), '_blank')">👁 Ver Reporte</button>
+    <button class="btn btn-primary" onclick="abrirPDF()">⬢ PDF</button>
+  </div>
+</header>
+
+<nav class="tabs-bar">
+  <button class="tab-btn active" onclick="showTab('tab-general', this)">General</button>
+  <button class="tab-btn" onclick="showTab('tab-actividades', this)">Actividades</button>
+  <button class="tab-btn" onclick="showTab('tab-mdo', this)">M. de Obra</button>
+  <button class="tab-btn" onclick="showTab('tab-materiales', this)">Materiales</button>
+  <button class="tab-btn" onclick="showTab('tab-incidentes', this)">Ocurrencias</button>
+  <button class="tab-btn" onclick="showTab('tab-fotos', this)">📷 Fotos</button>
+  <button class="tab-btn" onclick="showTab('tab-config', this)">⚙ Config</button>
+</nav>
+
+<main>
+
+  <!-- ══ CONFIG ══ -->
+  <div id="tab-config" class="tab-content">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">⚙</div><h2>Configuración de Conexión</h2></div>
+      <div class="card-body">
+        <div class="info-banner">
+          📌 Pegá aquí la URL de tu Google Apps Script Web App. Esta URL conecta el libro con tu Google Sheets y con el reporte para clientes.
+        </div>
+        <div class="field-group" style="margin-bottom:16px">
+          <label>URL del Apps Script Web App</label>
+          <div class="config-url">
+            <input type="text" id="apps-script-url" placeholder="https://script.google.com/macros/s/XXXXXXX/exec" oninput="guardarURL()">
+            <button class="btn btn-outline" onclick="testConexion()">Probar conexión</button>
+          </div>
+          <div class="url-status empty" id="url-status">⬡ Configurá la URL para sincronizar con Google Sheets</div>
+        </div>
+        <div class="field-group" style="margin-bottom:16px">
+          <label>Email del cliente (para el enlace de reporte)</label>
+          <input type="email" id="cliente-email" placeholder="cliente@mail.com" oninput="guardarURL()">
+          <div style="font-size:0.75rem;color:var(--gris-medio);margin-top:4px">Opcional. Se usa para mostrar el link de reporte correcto.</div>
+        </div>
+        <div style="background:var(--fondo);border-radius:var(--radio);padding:16px;margin-top:8px">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--gris-medio);margin-bottom:10px">Link del reporte para este proyecto</div>
+          <div id="link-reporte" style="font-size:0.85rem;color:var(--gris-oscuro);word-break:break-all;background:white;padding:10px 12px;border-radius:4px;border:1px solid var(--gris-claro)">— Completá el nombre del proyecto primero —</div>
+          <button class="btn btn-outline" style="margin-top:10px;font-size:0.78rem" onclick="copiarLink()">📋 Copiar link</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon">📋</div><h2>Instrucciones de Deploy</h2></div>
+      <div class="card-body">
+        <ol style="font-size:0.88rem;line-height:1.9;color:var(--gris-oscuro);padding-left:18px">
+          <li>Abrí <b>script.google.com</b> → Nuevo proyecto → pegá el contenido de <b>Code.gs</b></li>
+          <li>Menú <b>Implementar → Nueva implementación</b></li>
+          <li>Tipo: <b>Aplicación web</b> · Ejecutar como: <b>Yo</b> · Acceso: <b>Cualquier persona</b></li>
+          <li>Autorizá los permisos de Google Sheets y Drive</li>
+          <li>Copiá la URL generada y pegala arriba en "URL del Apps Script Web App"</li>
+          <li>Subí los tres archivos HTML a tu repositorio de GitHub</li>
+          <li>Activá GitHub Pages en Settings → Pages → rama main</li>
+          <li>El link del reporte para el cliente quedará del tipo:<br>
+            <code style="background:#111;color:var(--naranja-claro);padding:2px 8px;border-radius:3px;font-size:0.82rem">https://TU-USUARIO.github.io/REPO/reporte-cliente.html?proyecto=NombreProyecto</code>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ GENERAL ══ -->
+  <div id="tab-general" class="tab-content active">
+    <div class="info-banner">
+      🎙️ Podés usar <b>Nota de Audio</b> en cada sección para dictar la información. · 💾 Usá <b>Guardar</b> para sincronizar con Google Sheets.
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">01</div><h2>Información General</h2></div>
+      <div class="card-body">
+        <div class="grid-3" style="margin-bottom:14px">
+          <div class="field-group">
+            <label>Nombre del Proyecto</label>
+            <input type="text" id="g-proyecto" placeholder="Ej: Residencia Av. España 1245" oninput="actualizarLinkReporte()">
+          </div>
+          <div class="field-group">
+            <label>N° de Informe</label>
+            <input type="text" id="g-numero" placeholder="001">
+          </div>
+          <div class="field-group">
+            <label>Fecha</label>
+            <input type="date" id="g-fecha">
+          </div>
+        </div>
+        <div class="grid-3" style="margin-bottom:14px">
+          <div class="field-group">
+            <label>Responsable de Obra</label>
+            <input type="text" id="g-responsable" placeholder="Director / Conductor">
+          </div>
+          <div class="field-group">
+            <label>Etapa de Obra</label>
+            <select id="g-etapa">
+              <option value="">— Seleccionar —</option>
+              <option>Fundaciones</option>
+              <option>Estructura</option>
+              <option>Mampostería</option>
+              <option>Instalaciones</option>
+              <option>Terminaciones</option>
+              <option>Exterior y Paisajismo</option>
+              <option>Entrega Final</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>% Avance General</label>
+            <input type="number" id="g-avance" min="0" max="100" placeholder="0–100">
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:14px">
+          <label>Condiciones Climáticas</label>
+          <div class="clima-options">
+            <input type="radio" name="clima" id="c1" class="clima-opt" value="☀️ Soleado"><label for="c1">☀️ Soleado</label>
+            <input type="radio" name="clima" id="c2" class="clima-opt" value="⛅ Nublado"><label for="c2">⛅ Nublado</label>
+            <input type="radio" name="clima" id="c3" class="clima-opt" value="🌧️ Lluvia"><label for="c3">🌧️ Lluvia</label>
+            <input type="radio" name="clima" id="c4" class="clima-opt" value="⛈️ Tormenta"><label for="c4">⛈️ Tormenta</label>
+            <input type="radio" name="clima" id="c5" class="clima-opt" value="💨 Viento"><label for="c5">💨 Viento</label>
+            <input type="radio" name="clima" id="c6" class="clima-opt" value="🌡️ Calor Extremo"><label for="c6">🌡️ Calor</label>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field-group"><label>Temperatura (°C)</label><input type="number" id="g-temp" placeholder="28"></div>
+          <div class="field-group"><label>Hora inicio</label><input type="time" id="g-hora-ini"></div>
+          <div class="field-group"><label>Hora fin</label><input type="time" id="g-hora-fin"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🎙</div><h2>Nota de Audio — General</h2></div>
+      <div class="card-body"><div class="audio-zone">
+        <div class="audio-controls">
+          <button class="btn-record" id="rec-general" onclick="toggleRecord('general')"><span class="rec-dot"></span> Iniciar Grabación</button>
+          <span style="font-size:0.8rem;color:var(--gris-medio)">Dictá proyecto, etapa, clima...</span>
+        </div>
+        <div class="audio-list" id="audios-general"></div>
+        <div class="transcription-box" id="trans-general"><b>Transcripción:</b> <span id="trans-text-general"></span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══ ACTIVIDADES ══ -->
+  <div id="tab-actividades" class="tab-content">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">02</div><h2>Actividades Realizadas</h2></div>
+      <div class="card-body">
+        <div class="field-group" style="margin-bottom:14px">
+          <label>Descripción detallada</label>
+          <textarea id="act-descripcion" rows="5" placeholder="Describí las tareas ejecutadas durante el día..."></textarea>
+        </div>
+        <div class="grid-2" style="margin-bottom:14px">
+          <div class="field-group"><label>Progreso planificado (%)</label><input type="number" id="act-plan" min="0" max="100"></div>
+          <div class="field-group"><label>Progreso real ejecutado (%)</label><input type="number" id="act-real" min="0" max="100"></div>
+        </div>
+        <div class="field-group" style="margin-bottom:14px">
+          <label>Tareas pendientes / programadas para mañana</label>
+          <textarea id="act-pendiente" rows="3" placeholder="Describí tareas pendientes o del siguiente día..."></textarea>
+        </div>
+        <div class="field-group"><label>Observaciones adicionales</label><textarea id="act-obs" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🎙</div><h2>Nota de Audio — Actividades</h2></div>
+      <div class="card-body"><div class="audio-zone">
+        <div class="audio-controls">
+          <button class="btn-record" id="rec-actividades" onclick="toggleRecord('actividades')"><span class="rec-dot"></span> Iniciar Grabación</button>
+        </div>
+        <div class="audio-list" id="audios-actividades"></div>
+        <div class="transcription-box" id="trans-actividades"><b>Transcripción:</b> <span id="trans-text-actividades"></span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══ M. DE OBRA ══ -->
+  <div id="tab-mdo" class="tab-content">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">03</div><h2>Personal Presente</h2></div>
+      <div class="card-body">
+        <div class="tabla-wrap">
+          <table><thead><tr><th>Nombre / Empresa</th><th>Rol</th><th>Tipo</th><th>Cant.</th><th>Entrada</th><th>Salida</th><th>Obs.</th><th></th></tr></thead>
+          <tbody id="body-personal"></tbody></table>
+        </div>
+        <button class="btn-add-row" onclick="addRow('personal')">+ Agregar personal</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">03</div><h2>Equipos y Maquinaria</h2></div>
+      <div class="card-body">
+        <div class="tabla-wrap">
+          <table><thead><tr><th>Equipo</th><th>Propietario</th><th>Horas op.</th><th>Estado</th><th>Obs.</th><th></th></tr></thead>
+          <tbody id="body-equipos"></tbody></table>
+        </div>
+        <button class="btn-add-row" onclick="addRow('equipos')">+ Agregar equipo</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🎙</div><h2>Nota de Audio — M. de Obra</h2></div>
+      <div class="card-body"><div class="audio-zone">
+        <div class="audio-controls"><button class="btn-record" id="rec-mdo" onclick="toggleRecord('mdo')"><span class="rec-dot"></span> Iniciar Grabación</button></div>
+        <div class="audio-list" id="audios-mdo"></div>
+        <div class="transcription-box" id="trans-mdo"><b>Transcripción:</b> <span id="trans-text-mdo"></span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══ MATERIALES ══ -->
+  <div id="tab-materiales" class="tab-content">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">04</div><h2>Registro de Materiales</h2></div>
+      <div class="card-body">
+        <div class="tabla-wrap">
+          <table><thead><tr><th>Material</th><th>Unidad</th><th>Movimiento</th><th>Cantidad</th><th>Proveedor</th><th>Remito</th><th>Obs.</th><th></th></tr></thead>
+          <tbody id="body-materiales"></tbody></table>
+        </div>
+        <button class="btn-add-row" onclick="addRow('materiales')">+ Agregar material</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🎙</div><h2>Nota de Audio — Materiales</h2></div>
+      <div class="card-body"><div class="audio-zone">
+        <div class="audio-controls"><button class="btn-record" id="rec-materiales" onclick="toggleRecord('materiales')"><span class="rec-dot"></span> Iniciar Grabación</button></div>
+        <div class="audio-list" id="audios-materiales"></div>
+        <div class="transcription-box" id="trans-materiales"><b>Transcripción:</b> <span id="trans-text-materiales"></span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══ INCIDENTES ══ -->
+  <div id="tab-incidentes" class="tab-content">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">05</div><h2>Ocurrencias e Incidentes</h2></div>
+      <div class="card-body">
+        <div class="grid-2" style="margin-bottom:14px">
+          <div class="field-group"><label>¿Hubo retrasos?</label><select id="inc-retraso"><option value="no">No</option><option value="si">Sí</option></select></div>
+          <div class="field-group"><label>Causa del retraso</label><input type="text" id="inc-causa"></div>
+        </div>
+        <div class="field-group" style="margin-bottom:14px"><label>Descripción de incidentes / accidentes</label><textarea id="inc-descripcion" rows="4" placeholder="Incidentes de seguridad, accidentes..."></textarea></div>
+        <div class="field-group" style="margin-bottom:14px"><label>Visitas a obra</label><textarea id="inc-visitas" rows="3" placeholder="Nombre, empresa, motivo, acuerdos..."></textarea></div>
+        <div class="field-group" style="margin-bottom:14px"><label>Instrucciones especiales recibidas</label><textarea id="inc-instrucciones" rows="3"></textarea></div>
+        <div class="field-group"><label>Observaciones de seguridad e higiene</label><textarea id="inc-seguridad" rows="3"></textarea></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🎙</div><h2>Nota de Audio — Ocurrencias</h2></div>
+      <div class="card-body"><div class="audio-zone">
+        <div class="audio-controls"><button class="btn-record" id="rec-incidentes" onclick="toggleRecord('incidentes')"><span class="rec-dot"></span> Iniciar Grabación</button></div>
+        <div class="audio-list" id="audios-incidentes"></div>
+        <div class="transcription-box" id="trans-incidentes"><b>Transcripción:</b> <span id="trans-text-incidentes"></span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ══ FOTOS ══ -->
+  <div id="tab-fotos" class="tab-content">
+    <div class="card">
+      <div class="card-header"><div class="card-icon">📷</div><h2>Evidencia Visual — Sheet de Fotografías</h2></div>
+      <div class="card-body">
+        <div class="info-banner">📌 Las fotos se almacenan como base64 en Google Sheets. Recomendamos máx. 10 fotos por registro para no superar el límite de tamaño de celda.</div>
+        <input type="file" id="foto-input" accept="image/*" multiple onchange="cargarFotos(event)">
+        <div class="fotos-grid" id="fotos-grid">
+          <button class="btn-add-foto" onclick="document.getElementById('foto-input').click()">
+            <span class="plus-icon">+</span>
+            <span style="font-size:0.78rem;color:var(--gris-medio);margin-top:3px">Agregar fotos</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- PDF OVERLAY -->
+<div id="pdf-overlay">
+  <div id="pdf-box">
+    <h3>Exportar PDF</h3>
+    <p>Se abrirá el diálogo de impresión. Seleccioná <b>"Guardar como PDF"</b>.</p>
+    <div class="pdf-actions">
+      <button class="btn btn-primary" onclick="imprimirPDF()">Imprimir / Guardar PDF</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('pdf-overlay').classList.remove('show')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIGURACIÓN
+// ══════════════════════════════════════════════
+let APPS_SCRIPT_URL = localStorage.getItem('apps_script_url') || '';
+
+function guardarURL() {
+  APPS_SCRIPT_URL = document.getElementById('apps-script-url').value.trim();
+  localStorage.setItem('apps_script_url', APPS_SCRIPT_URL);
+  actualizarLinkReporte();
+}
+
+function actualizarLinkReporte() {
+  const proyecto = document.getElementById('g-proyecto')?.value || '';
+  const base = window.location.href.replace('libro-diario-obra.html', '').replace(/\/$/, '');
+  const link = proyecto
+    ? `${base}/reporte-cliente.html?proyecto=${encodeURIComponent(proyecto)}`
+    : '— Completá el nombre del proyecto primero —';
+  const el = document.getElementById('link-reporte');
+  if (el) el.textContent = link;
+}
+
+function copiarLink() {
+  const texto = document.getElementById('link-reporte').textContent;
+  if (texto.startsWith('—')) return;
+  navigator.clipboard.writeText(texto).then(() => toast('✅ Link copiado al portapapeles'));
+}
+
+async function testConexion() {
+  const url = document.getElementById('apps-script-url').value.trim();
+  const status = document.getElementById('url-status');
+  if (!url) { status.className = 'url-status error'; status.textContent = '❌ Ingresá la URL primero'; return; }
+  status.className = 'url-status empty'; status.textContent = '⏳ Probando conexión...';
+  try {
+    const res = await fetch(`${url}?action=get_proyectos`, { mode: 'no-cors' });
+    status.className = 'url-status ok'; status.textContent = '✅ Conexión exitosa — Apps Script respondió correctamente';
+    APPS_SCRIPT_URL = url;
+    localStorage.setItem('apps_script_url', url);
+  } catch(e) {
+    status.className = 'url-status error'; status.textContent = '❌ No se pudo conectar. Verificá la URL y los permisos de la Web App.';
+  }
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// TABLAS DINÁMICAS
+// ══════════════════════════════════════════════
+const tablasConfig = {
+  personal: { cols: [
+    {type:'text', ph:'Nombre / Empresa'}, {type:'text', ph:'Rol'},
+    {type:'select', opts:['Contratista','Subcontratista','Personal propio','Visita']},
+    {type:'number', ph:'1'}, {type:'time'}, {type:'time'}, {type:'text', ph:'Observación'}
+  ]},
+  equipos: { cols: [
+    {type:'text', ph:'Hormigonera, Grúa...'}, {type:'text', ph:'Propietario'},
+    {type:'number', ph:'Hs'}, {type:'select', opts:['Operativo','En reparación','Stand-by']}, {type:'text', ph:'Observación'}
+  ]},
+  materiales: { cols: [
+    {type:'text', ph:'Cemento, Hierro...'}, {type:'select', opts:['kg','ton','m2','m3','m lin','unidades','bolsas','litros']},
+    {type:'select', opts:['Ingreso','Egreso','Consumo']}, {type:'number', ph:'0'},
+    {type:'text', ph:'Proveedor'}, {type:'text', ph:'N° Remito'}, {type:'text', ph:'Observación'}
+  ]}
+};
+
+function addRow(tabla) {
+  const cfg = tablasConfig[tabla];
+  const tbody = document.getElementById('body-' + tabla);
+  const tr = document.createElement('tr');
+  cfg.cols.forEach(col => {
+    const td = document.createElement('td');
+    if (col.type === 'select') {
+      const s = document.createElement('select');
+      col.opts.forEach(o => { const op = document.createElement('option'); op.textContent = o; s.appendChild(op); });
+      td.appendChild(s);
+    } else {
+      const i = document.createElement('input'); i.type = col.type;
+      if (col.ph) i.placeholder = col.ph;
+      td.appendChild(i);
+    }
+    tr.appendChild(td);
+  });
+  const tdDel = document.createElement('td');
+  const btn = document.createElement('button'); btn.className = 'btn-del'; btn.textContent = '✕';
+  btn.onclick = () => tr.remove();
+  tdDel.appendChild(btn); tr.appendChild(tdDel);
+  tbody.appendChild(tr);
+}
+
+function getTableData(id) {
+  return Array.from(document.querySelectorAll('#body-' + id + ' tr'))
+    .map(r => Array.from(r.querySelectorAll('input,select')).map(i => i.value));
+}
+
+// ══════════════════════════════════════════════
+// FOTOS
+// ══════════════════════════════════════════════
+let fotosData = [];
+
+function cargarFotos(evt) {
+  Array.from(evt.target.files).forEach(file => {
+    // Comprimir antes de subir
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 800;
+        let w = img.width, h = img.height;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        fotosData.push({ src: canvas.toDataURL('image/jpeg', 0.75), desc: '', name: file.name });
+        renderFotos();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  evt.target.value = '';
+}
+
+function renderFotos() {
+  const grid = document.getElementById('fotos-grid');
+  grid.innerHTML = '';
+  fotosData.forEach((f, i) => {
+    const div = document.createElement('div'); div.className = 'foto-card';
+    div.innerHTML = `<img src="${f.src}">
+      <div class="foto-overlay"><input type="text" value="${f.desc}" placeholder="Descripción..."
+        style="background:transparent;border:none;color:white;width:100%;font-size:0.7rem;padding:0"
+        onchange="fotosData[${i}].desc=this.value"></div>
+      <button onclick="fotosData.splice(${i},1);renderFotos()" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.5);border:none;color:white;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:0.75rem">✕</button>`;
+    grid.appendChild(div);
+  });
+  const btn = document.createElement('button'); btn.className = 'btn-add-foto';
+  btn.innerHTML = '<span class="plus-icon">+</span><span style="font-size:0.78rem;color:var(--gris-medio);margin-top:3px">Agregar fotos</span>';
+  btn.onclick = () => document.getElementById('foto-input').click();
+  grid.appendChild(btn);
+}
+
+// ══════════════════════════════════════════════
+// AUDIO
+// ══════════════════════════════════════════════
+let mediaRecorders = {}, audioChunks = {}, streams = {}, recording = {};
+
+async function toggleRecord(zona) {
+  const btn = document.getElementById('rec-' + zona);
+  if (!recording[zona]) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streams[zona] = stream;
+      const mr = new MediaRecorder(stream);
+      mediaRecorders[zona] = mr; audioChunks[zona] = [];
+      mr.ondataavailable = e => audioChunks[zona].push(e.data);
+      mr.onstop = () => finalizarAudio(zona);
+      mr.start(); recording[zona] = true;
+      btn.classList.add('recording');
+      btn.innerHTML = '<span class="rec-dot"></span> Detener grabación';
+    } catch(e) { alert('No se pudo acceder al micrófono. Verificá los permisos del navegador.'); }
+  } else {
+    mediaRecorders[zona].stop(); streams[zona].getTracks().forEach(t => t.stop());
+    recording[zona] = false; btn.classList.remove('recording');
+    btn.innerHTML = '<span class="rec-dot"></span> Iniciar Grabación';
+  }
+}
+
+function finalizarAudio(zona) {
+  const blob = new Blob(audioChunks[zona], { type: 'audio/webm' });
+  const url = URL.createObjectURL(blob);
+  const list = document.getElementById('audios-' + zona);
+  const div = document.createElement('div'); div.className = 'audio-item';
+  const num = list.children.length + 1;
+  div.innerHTML = `<span style="font-weight:700;color:var(--naranja-oscuro);min-width:20px">${num}.</span>
+    <audio controls src="${url}"></audio>
+    <button onclick="this.parentElement.remove()" class="btn-del">✕</button>`;
+  list.appendChild(div);
+
+  // Transcripción via Web Speech
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const r = new SR(); r.lang = 'es-AR';
+    r.onresult = e => {
+      const texto = e.results[0][0].transcript;
+      const span = document.getElementById('trans-text-' + zona);
+      span.textContent = (span.textContent ? span.textContent + ' ' : '') + texto;
+      document.getElementById('trans-' + zona).classList.add('visible');
+      // Auto-fill
+      const mapaFill = { actividades: 'act-descripcion', incidentes: 'inc-descripcion' };
+      const campo = mapaFill[zona];
+      if (campo) {
+        const el = document.getElementById(campo);
+        el.value = el.value ? el.value + '\n' + texto : texto;
+      }
+    };
+    try { r.start(); } catch(e) {}
+  }
+}
+
+// ══════════════════════════════════════════════
+// GUARDAR Y SINCRONIZAR CON SHEETS
+// ══════════════════════════════════════════════
+function recolectarDatos() {
+  const climaEl = document.querySelector('input[name="clima"]:checked');
+  return {
+    numero: document.getElementById('g-numero').value || '',
+    fecha: document.getElementById('g-fecha').value || '',
+    proyecto: document.getElementById('g-proyecto').value || '',
+    responsable: document.getElementById('g-responsable').value || '',
+    etapa: document.getElementById('g-etapa').value || '',
+    avance: document.getElementById('g-avance').value || '',
+    clima: climaEl ? climaEl.value : '',
+    temp: document.getElementById('g-temp').value || '',
+    horaIni: document.getElementById('g-hora-ini').value || '',
+    horaFin: document.getElementById('g-hora-fin').value || '',
+    actDescripcion: document.getElementById('act-descripcion').value || '',
+    actPendiente: document.getElementById('act-pendiente').value || '',
+    actPlan: document.getElementById('act-plan').value || '',
+    actReal: document.getElementById('act-real').value || '',
+    incDescripcion: document.getElementById('inc-descripcion').value || '',
+    incVisitas: document.getElementById('inc-visitas').value || '',
+    incInstrucciones: document.getElementById('inc-instrucciones').value || '',
+    incSeguridad: document.getElementById('inc-seguridad').value || '',
+    personal_json: getTableData('personal'),
+    equipos_json: getTableData('equipos'),
+    materiales_json: getTableData('materiales'),
+    fotos_count: fotosData.length,
+    fotos_json: fotosData.map(f => ({ src: f.src, desc: f.desc })),
+    timestamp: new Date().toISOString()
+  };
+}
+
+function setSyncStatus(state, text) {
+  const el = document.getElementById('sync-status');
+  el.className = 'sync-status ' + state;
+  document.getElementById('sync-text').textContent = text;
+}
+
+async function guardarYSincronizar() {
+  const proyecto = document.getElementById('g-proyecto').value;
+  if (!proyecto) { toast('⚠ Completá el nombre del proyecto primero'); return; }
+
+  const data = recolectarDatos();
+
+  // Guardar siempre en localStorage como respaldo
+  localStorage.setItem('diario_obra_ultimo', JSON.stringify(data));
+  let registros = [];
+  try { registros = JSON.parse(localStorage.getItem('diario_obra_registros')) || []; } catch(e) {}
+  const idx = registros.findIndex(r => r.numero === data.numero && r.proyecto === data.proyecto && r.fecha === data.fecha);
+  if (idx >= 0) registros[idx] = data; else registros.unshift(data);
+  localStorage.setItem('diario_obra_registros', JSON.stringify(registros));
+
+  // Sincronizar con Apps Script / Sheets
+  if (!APPS_SCRIPT_URL) {
+    setSyncStatus('saved', 'Guardado local ✓');
+    toast('💾 Guardado localmente. Configurá Apps Script para sincronizar con Sheets.');
+    return;
+  }
+
+  setSyncStatus('saving', 'Sincronizando...');
+  document.getElementById('btn-guardar').disabled = true;
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'guardar_registro', data })
+    });
+    setSyncStatus('saved', 'Guardado en Sheets ✓');
+    toast('✅ Registro guardado en Google Sheets');
+  } catch(err) {
+    setSyncStatus('error', 'Error de conexión');
+    toast('❌ No se pudo conectar con Sheets. Guardado localmente.');
+  } finally {
+    document.getElementById('btn-guardar').disabled = false;
+    setTimeout(() => setSyncStatus('idle', 'Sin cambios nuevos'), 4000);
+  }
+}
+
+// ══════════════════════════════════════════════
+// PDF
+// ══════════════════════════════════════════════
+function abrirPDF() { document.getElementById('pdf-overlay').classList.add('show'); }
+function imprimirPDF() {
+  document.getElementById('pdf-overlay').classList.remove('show');
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'block');
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      document.querySelectorAll('.tab-content').forEach(t => { t.style.display = ''; });
+      document.querySelector('.tab-content.active').style.display = 'block';
+    }, 600);
+  }, 200);
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function toast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#FFD166;padding:11px 22px;border-radius:6px;font-weight:700;font-size:0.88rem;z-index:9999;border:2px solid #F5A800;letter-spacing:0.03em;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(()=>t.remove(),400); }, 2800);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.getElementById('g-fecha').value = new Date().toISOString().split('T')[0];
+addRow('personal'); addRow('equipos'); addRow('materiales');
+
+// Restaurar URL guardada
+if (APPS_SCRIPT_URL) {
+  document.getElementById('apps-script-url').value = APPS_SCRIPT_URL;
+  document.getElementById('url-status').className = 'url-status ok';
+  document.getElementById('url-status').textContent = '✅ URL configurada';
+}
+actualizarLinkReporte();
+
+// Autoguardado local cada 60 segundos
+setInterval(() => {
+  const proyecto = document.getElementById('g-proyecto').value;
+  if (proyecto) {
+    localStorage.setItem('diario_obra_ultimo', JSON.stringify(recolectarDatos()));
+  }
+}, 60000);
+</script>
+</body>
+</html>

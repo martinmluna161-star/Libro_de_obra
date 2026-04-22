@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte de Obra — Sanchez Gil +arquitectura</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --n:#F5A800;--no:#E08000;--nc:#FFD166;
+    --k:#1A1A1A;--go:#2E2E2E;--gm:#5A5A5A;
+    --gc:#E8E8E8;--f:#F4F0EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Barlow',sans-serif;background:var(--f);color:var(--k)}
+
+  /* TOP BAR */
+  .top-bar{background:var(--k);padding:11px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--n);position:sticky;top:0;z-index:100}
+  .top-info{color:#aaa;font-size:0.8rem;display:flex;align-items:center;gap:12px}
+  .top-info b{color:var(--nc)}
+  .top-info .sep{color:#444}
+  .btn-pdf{background:var(--n);color:var(--k);border:none;padding:9px 22px;font-family:'Barlow',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.04em;text-transform:uppercase;border-radius:5px;cursor:pointer;transition:background 0.18s}
+  .btn-pdf:hover{background:var(--no)}
+
+  /* LOADING */
+  #loading{position:fixed;inset:0;background:var(--k);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:18px}
+  .loader-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.6rem;color:var(--n)}
+  .loader-sub{font-size:0.7rem;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px}
+  .loader-bar{width:220px;height:3px;background:#333;border-radius:2px;overflow:hidden}
+  .loader-fill{height:100%;background:var(--n);animation:ld 1.8s ease-in-out infinite}
+  @keyframes ld{0%{width:0}50%{width:70%}100%{width:100%}}
+  .loader-txt{font-size:0.8rem;color:#555;letter-spacing:0.04em}
+
+  /* PÁGINA */
+  .page-wrap{max-width:980px;margin:28px auto 60px;background:white;border-radius:8px;overflow:hidden;box-shadow:0 4px 28px rgba(0,0,0,0.09);opacity:0;transition:opacity 0.5s}
+  .page-wrap.vis{opacity:1}
+
+  /* HEADER */
+  .rh{background:var(--k);display:flex;border-bottom:5px solid var(--n)}
+  .rh-logo{background:var(--n);padding:20px 24px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .rh-brand-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.4rem;color:var(--k);line-height:1}
+  .rh-brand-sub{font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--k);margin-top:2px}
+  .rh-center{padding:20px 26px;flex:1;display:flex;flex-direction:column;justify-content:center}
+  .rh-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.7rem;color:white;text-transform:uppercase;letter-spacing:0.02em;line-height:1}
+  .rh-proyecto{font-size:0.95rem;color:var(--nc);margin-top:5px;font-weight:300}
+  .rh-right{padding:20px 26px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;flex-shrink:0}
+  .rh-avance{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3.2rem;color:var(--n);line-height:1}
+  .rh-av-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#666;font-weight:700}
+  .rh-fecha{font-size:0.78rem;color:#777;margin-top:4px}
+
+  /* BARRA DATOS */
+  .pb{background:#111;display:flex;align-items:stretch;border-bottom:1px solid #2a2a2a;flex-wrap:wrap}
+  .pb-item{padding:12px 18px;border-right:1px solid #2a2a2a;display:flex;flex-direction:column;gap:2px;min-width:100px}
+  .pb-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#555}
+  .pb-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;color:#bbb}
+  .pb-val.n{color:var(--n)}
+  .pb-track{flex:1;padding:12px 18px;display:flex;align-items:center;gap:12px}
+  .pb-track-label{font-size:0.6rem;color:#555;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;white-space:nowrap}
+  .track{flex:1;height:7px;background:#333;border-radius:4px;overflow:hidden}
+  .track-fill{height:100%;background:linear-gradient(90deg,var(--no),var(--n));border-radius:4px;transition:width 1s ease}
+  .track-pct{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;color:var(--n)}
+
+  /* CUERPO */
+  .body{padding:28px}
+
+  /* RESUMEN */
+  .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
+  .res-card{background:var(--f);border-radius:6px;padding:14px 16px;border-top:3px solid var(--gc)}
+  .res-card.hl{border-top-color:var(--n)}
+  .res-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--gm);margin-bottom:5px}
+  .res-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.5rem;color:var(--k);line-height:1;margin-bottom:3px}
+  .res-val.n{color:var(--no)}
+  .res-sub{font-size:0.76rem;color:var(--gm)}
+
+  /* SECCIONES */
+  .sec{margin-bottom:26px;break-inside:avoid}
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--k)}
+  .sec-num{background:var(--n);color:var(--k);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.7rem;width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.05rem;text-transform:uppercase;letter-spacing:0.06em}
+  .sec-badge{margin-left:auto;font-size:0.68rem;font-weight:700;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(245,168,0,0.12);color:var(--no)}
+
+  .texto{font-size:0.9rem;line-height:1.7;color:var(--go);white-space:pre-wrap;padding:14px 16px;background:var(--f);border-radius:5px;border-left:3px solid var(--n)}
+  .texto.vacio{color:#bbb;font-style:italic;border-left-color:#ddd}
+  .sub-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gm);margin:12px 0 5px}
+
+  /* TABLAS */
+  .tw{overflow-x:auto;border-radius:5px;border:1px solid var(--gc)}
+  table{width:100%;border-collapse:collapse;font-size:0.83rem}
+  thead tr{background:var(--k)}
+  th{padding:8px 12px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--nc)}
+  td{padding:7px 12px;border-bottom:1px solid var(--f);color:var(--go)}
+  tbody tr:nth-child(even){background:var(--f)}
+  tbody tr:last-child td{border-bottom:none}
+  .er td{color:#bbb;font-style:italic;text-align:center;padding:14px}
+  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
+  .bi{background:#E8F5E9;color:#2E7D32}
+  .be{background:#FFF3E0;color:#E65100}
+  .bc{background:#E3F2FD;color:#1565C0}
+
+  /* FOTOS */
+  .fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .fi img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:5px;border:1px solid var(--gc);display:block}
+  .fi-desc{font-size:0.7rem;color:var(--gm);margin-top:4px;text-align:center;font-style:italic}
+  .fe{grid-column:1/-1;text-align:center;padding:28px;color:#bbb;font-style:italic;font-size:0.85rem;border:2px dashed var(--gc);border-radius:6px}
+
+  /* HISTORIAL */
+  .ht{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--k);border-radius:6px;cursor:pointer;transition:background 0.18s;user-select:none}
+  .ht:hover{background:#222}
+  .ht-left{display:flex;align-items:center;gap:10px}
+  .ht-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;color:white;text-transform:uppercase;letter-spacing:0.05em}
+  .ht-cnt{background:var(--n);color:var(--k);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.82rem;padding:1px 10px;border-radius:20px}
+  .ht-arr{color:var(--nc);font-size:1.1rem;transition:transform 0.3s}
+  .ht-arr.op{transform:rotate(180deg)}
+  .hb{display:none;border:1px solid var(--gc);border-top:none;border-radius:0 0 6px 6px;overflow:hidden}
+  .hb.op{display:block}
+  .hi{border-bottom:1px solid var(--gc)}
+  .hi:last-child{border-bottom:none}
+  .hi-hdr{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;background:white;transition:background 0.15s}
+  .hi-hdr:hover{background:var(--f)}
+  .hi-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.1rem;color:var(--no);min-width:36px}
+  .hi-fecha{font-size:0.83rem;font-weight:700;color:var(--k);min-width:86px}
+  .hi-act{font-size:0.8rem;color:var(--gm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hi-pct{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.95rem;color:var(--no);min-width:44px;text-align:right}
+  .hi-arr{color:#ccc;font-size:0.85rem;transition:transform 0.25s;flex-shrink:0}
+  .hi-arr.op{transform:rotate(180deg);color:var(--n)}
+  .minibar{display:flex;align-items:center;gap:6px}
+  .mbt{width:70px;height:5px;background:var(--gc);border-radius:3px;overflow:hidden}
+  .mbf{height:100%;background:linear-gradient(90deg,var(--no),var(--n));border-radius:3px}
+  .hd{display:none;padding:16px 20px;background:var(--f);border-top:1px solid var(--gc)}
+  .hd.op{display:block}
+  .hd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+  .hd-item{display:flex;flex-direction:column;gap:2px}
+  .hd-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#aaa}
+  .hd-val{font-size:0.83rem;font-weight:600;color:var(--k)}
+  .hd-texto{font-size:0.83rem;line-height:1.6;color:var(--go);padding:10px 12px;background:white;border-radius:4px;border-left:3px solid var(--n);margin-bottom:8px;white-space:pre-wrap}
+  .hd-fotos{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+  .hd-fotos img{width:95px;height:71px;object-fit:cover;border-radius:4px;border:1px solid var(--gc)}
+
+  /* FIRMA */
+  .firma{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px;padding-top:18px;border-top:1px solid var(--gc)}
+  .fb{display:flex;flex-direction:column;align-items:center;gap:5px}
+  .fl{width:100%;border-bottom:1.5px solid var(--k);height:40px}
+  .flabel{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gm)}
+  .fnombre{font-size:0.82rem;font-weight:600;color:var(--k)}
+
+  /* FOOTER */
+  .rf{background:var(--k);padding:12px 26px;display:flex;align-items:center;justify-content:space-between;border-top:3px solid var(--n)}
+  .rf-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.9rem;color:var(--n)}
+  .rf-sub{font-size:0.62rem;color:#555;margin-top:1px}
+  .rf-right{font-size:0.68rem;color:#555;text-align:right;line-height:1.5}
+
+  /* ERROR */
+  #err{display:none;text-align:center;padding:80px 20px;max-width:500px;margin:60px auto}
+  #err h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.5rem;margin-bottom:8px}
+  #err p{color:var(--gm);font-size:0.88rem;line-height:1.7}
+  #err code{background:var(--f);padding:2px 8px;border-radius:3px;font-size:0.82rem}
+
+  @media print{
+    body{background:white}
+    .top-bar,.ht{display:none!important}
+    .page-wrap{margin:0;border-radius:0;box-shadow:none;max-width:100%}
+    .hb,.hd{display:block!important}
+    .fg{grid-template-columns:repeat(3,1fr)}
+    #loading{display:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div style="display:flex;align-items:center;gap:14px">
+    <svg width="44" height="44" viewBox="0 0 48 48" fill="none">
+      <path d="M8 36L20 24L8 12H22L34 24L22 36H8Z" fill="#2a2a2a"/>
+      <path d="M10 14L22 26V36L10 24V14Z" fill="#FFD166"/>
+      <path d="M10 14L22 14L30 22L18 22L10 14Z" fill="#E08000"/>
+      <path d="M10 36L22 36L30 26L18 26L10 36Z" fill="#F5A800"/>
+    </svg>
+    <div><div class="loader-brand">Sanchez Gil</div><div class="loader-sub">+arquitectura</div></div>
+  </div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-txt" id="ltxt">Cargando datos del proyecto...</div>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-info">
+    <b id="tb-proy">—</b>
+    <span class="sep">·</span>
+    <span>Solo lectura</span>
+    <span class="sep">·</span>
+    <span id="tb-regs">0 registros</span>
+  </div>
+  <button class="btn-pdf" onclick="window.print()">⬢ Descargar PDF</button>
+</div>
+
+<!-- ERROR STATE -->
+<div id="err">
+  <h2>Sin datos del proyecto</h2>
+  <p id="err-msg">Verificá que el nombre del proyecto en la URL sea correcto.</p>
+</div>
+
+<!-- PÁGINA -->
+<div class="page-wrap" id="page">
+
+  <!-- HEADER -->
+  <div class="rh">
+    <div class="rh-logo">
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none">
+        <path d="M8 36L20 24L8 12H22L34 24L22 36H8Z" fill="#1A1A1A"/>
+        <path d="M10 14L22 26V36L10 24V14Z" fill="#FFD166"/>
+        <path d="M10 14L22 14L30 22L18 22L10 14Z" fill="#E08000"/>
+        <path d="M10 36L22 36L30 26L18 26L10 36Z" fill="#F5A800"/>
+      </svg>
+      <div>
+        <div class="rh-brand-name">Sanchez Gil</div>
+        <div class="rh-brand-sub">+arquitectura</div>
+      </div>
+    </div>
+    <div class="rh-center">
+      <div class="rh-title">Reporte Diario de Obra</div>
+      <div class="rh-proyecto" id="hdr-proy">—</div>
+      <div style="font-size:0.74rem;color:#666;margin-top:4px" id="hdr-resp"></div>
+    </div>
+    <div class="rh-right">
+      <div class="rh-avance" id="hdr-av">—</div>
+      <div class="rh-av-label">Avance actual</div>
+      <div class="rh-fecha" id="hdr-fecha">—</div>
+    </div>
+  </div>
+
+  <!-- BARRA DATOS -->
+  <div class="pb">
+    <div class="pb-item"><span class="pb-label">Etapa</span><span class="pb-val n" id="pb-etapa">—</span></div>
+    <div class="pb-item"><span class="pb-label">Último reg.</span><span class="pb-val" id="pb-fecha">—</span></div>
+    <div class="pb-item"><span class="pb-label">Clima</span><span class="pb-val" id="pb-clima">—</span></div>
+    <div class="pb-item"><span class="pb-label">Temp.</span><span class="pb-val" id="pb-temp">—</span></div>
+    <div class="pb-item"><span class="pb-label">Jornada</span><span class="pb-val" id="pb-jornada">—</span></div>
+    <div class="pb-track">
+      <span class="pb-track-label">Avance general</span>
+      <div class="track"><div class="track-fill" id="tf" style="width:0%"></div></div>
+      <span class="track-pct" id="tpct">0%</span>
+    </div>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="body">
+
+    <!-- RESUMEN EJECUTIVO -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-num">★</div>
+        <span class="sec-title">Resumen Ejecutivo</span>
+        <span class="sec-badge" id="inf-badge">Informe #—</span>
+      </div>
+      <div class="res-grid">
+        <div class="res-card hl">
+          <div class="res-label">Registros totales</div>
+          <div class="res-val n" id="r-total">—</div>
+          <div class="res-sub">días documentados</div>
+        </div>
+        <div class="res-card">
+          <div class="res-label">Inicio documentación</div>
+          <div class="res-val" id="r-inicio" style="font-size:1.1rem">—</div>
+          <div class="res-sub">primer registro cargado</div>
+        </div>
+        <div class="res-card">
+          <div class="res-label">Personal máximo</div>
+          <div class="res-val n" id="r-personal">—</div>
+          <div class="res-sub">personas en obra</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVIDADES ÚLTIMO DÍA -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <span class="sec-title">Último Día — Actividades Realizadas</span>
+      </div>
+      <p class="texto" id="s-act">—</p>
+      <div id="pend-wrap" style="display:none">
+        <div class="sub-label">Tareas programadas para próxima jornada</div>
+        <p class="texto" id="s-pend" style="border-left-color:#ccc"></p>
+      </div>
+    </div>
+
+    <!-- COMPARATIVO AVANCE -->
+    <div class="sec" id="s-comp" style="display:none">
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <span class="sec-title">Comparativo de Avance</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="background:var(--f);border-radius:5px;padding:16px 18px;border-left:3px solid #2E7D32">
+          <div class="sub-label" style="margin:0 0 4px">Planificado</div>
+          <div style="font-family:'Barlow Condensed';font-weight:900;font-size:2.2rem;color:#2E7D32" id="pct-plan">—</div>
+        </div>
+        <div style="background:var(--f);border-radius:5px;padding:16px 18px;border-left:3px solid var(--no)">
+          <div class="sub-label" style="margin:0 0 4px">Ejecutado</div>
+          <div style="font-family:'Barlow Condensed';font-weight:900;font-size:2.2rem;color:var(--no)" id="pct-real">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONAL -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <span class="sec-title">Personal Presente — Último Día</span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Nombre / Empresa</th><th>Rol</th><th>Tipo</th><th>Cant.</th><th>Entrada</th><th>Salida</th></tr></thead>
+          <tbody id="t-personal"><tr class="er"><td colspan="6">Sin datos de personal</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATERIALES -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <span class="sec-title">Materiales — Último Día</span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Material</th><th>Movimiento</th><th>Cantidad</th><th>Unidad</th><th>Proveedor</th><th>Remito</th></tr></thead>
+          <tbody id="t-mat"><tr class="er"><td colspan="6">Sin movimientos de materiales</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- OCURRENCIAS -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-num">05</div>
+        <span class="sec-title">Ocurrencias — Último Día</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:var(--f);border-radius:5px;padding:14px 16px;border-left:3px solid var(--n)" id="inc-box">
+          <div class="sub-label" style="margin:0 0 5px">Incidentes</div>
+          <div style="font-size:0.85rem;line-height:1.6;white-space:pre-wrap;color:var(--go)" id="s-inc">Sin incidentes registrados.</div>
+        </div>
+        <div style="background:var(--f);border-radius:5px;padding:14px 16px;border-left:3px solid var(--gc)">
+          <div class="sub-label" style="margin:0 0 5px">Visitas</div>
+          <div style="font-size:0.85rem;line-height:1.6;white-space:pre-wrap;color:var(--go)" id="s-vis">Sin visitas registradas.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOTOS ÚLTIMO DÍA -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-num">📷</div>
+        <span class="sec-title">Evidencia Visual — Último Día</span>
+      </div>
+      <div class="fg" id="fg">
+        <div class="fe">Sin fotografías adjuntas en este registro.</div>
+      </div>
+    </div>
+
+    <!-- FIRMA -->
+    <div class="firma">
+      <div class="fb">
+        <div class="fl"></div>
+        <div class="fnombre" id="f-resp">Director / Responsable de Obra</div>
+        <div class="flabel">Firma y Aclaración</div>
+      </div>
+      <div class="fb">
+        <div class="fl"></div>
+        <div class="fnombre">Comitente / Cliente</div>
+        <div class="flabel">Firma y Aclaración</div>
+      </div>
+    </div>
+
+    <!-- HISTORIAL COMPLETO -->
+    <div style="margin-top:36px">
+      <div class="ht" onclick="toggleHist()">
+        <div class="ht-left">
+          <span class="ht-title">Historial Completo de Registros</span>
+          <span class="ht-cnt" id="ht-cnt">0</span>
+        </div>
+        <span class="ht-arr" id="ht-arr">▼</span>
+      </div>
+      <div class="hb" id="hb"></div>
+    </div>
+
+  </div><!-- /body -->
+
+  <!-- FOOTER -->
+  <div class="rf">
+    <div>
+      <div class="rf-brand">Sanchez Gil +arquitectura</div>
+      <div class="rf-sub">Documento solo lectura · Generado automáticamente</div>
+    </div>
+    <div class="rf-right">
+      Impreso: <span id="fp"></span>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ── PARÁMETROS ──
+const params  = new URLSearchParams(window.location.search);
+const PROYECTO = params.get('proyecto') || '';
+const AS_URL   = localStorage.getItem('apps_script_url') || '';
+
+// Fecha de impresión
+document.getElementById('fp').textContent = new Date()
+  .toLocaleDateString('es-AR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// ── CARGA ──
+async function init() {
+  if (!PROYECTO) {
+    showErr('No se especificó un proyecto en la URL.<br>Formato correcto:<br><code>reporte-cliente.html?proyecto=Nombre del Proyecto</code>');
+    return;
+  }
+  setLtxt(`Cargando "${PROYECTO}"...`);
+
+  let regs = [];
+
+  // Intentar desde Sheets
+  if (AS_URL) {
+    try {
+      setLtxt('Conectando con Google Sheets...');
+      const r = await fetch(`${AS_URL}?action=get_registros&proyecto=${encodeURIComponent(PROYECTO)}`);
+      const d = await r.json();
+      if (d.registros?.length) {
+        regs = d.registros;
+        setLtxt(`${regs.length} registros cargados desde Sheets ✓`);
+      }
+    } catch(e) {
+      setLtxt('Sheets no disponible — buscando caché local...');
+    }
+  }
+
+  // Fallback: localStorage
+  if (!regs.length) {
+    try {
+      const local = JSON.parse(localStorage.getItem('diario_obra_registros')) || [];
+      regs = local.filter(r =>
+        (r.proyecto||'').toLowerCase() === PROYECTO.toLowerCase()
+      );
+      if (regs.length) setLtxt(`${regs.length} registros cargados desde caché ✓`);
+    } catch(e) {}
+  }
+
+  if (!regs.length) {
+    showErr(`No se encontraron registros para <b>"${PROYECTO}"</b>.<br><br>
+      Verificá que:<br>
+      · El nombre del proyecto en la URL sea idéntico al cargado en el libro<br>
+      · Hayas guardado al menos un registro desde el Libro Diario de Obra<br>
+      · La URL del Apps Script esté configurada correctamente`);
+    return;
+  }
+
+  // Ordenar por fecha descendente
+  regs.sort((a,b) => a.fecha > b.fecha ? -1 : 1);
+
+  setTimeout(() => {
+    const l = document.getElementById('loading');
+    l.style.opacity = '0';
+    l.style.transition = 'opacity 0.4s';
+    setTimeout(() => { l.style.display = 'none'; render(regs); }, 400);
+  }, 700);
+}
+
+// ── RENDER ──
+function render(regs) {
+  const u = regs[0];
+
+  // Top bar
+  document.getElementById('tb-proy').textContent = PROYECTO;
+  document.getElementById('tb-regs').textContent = `${regs.length} registro${regs.length!==1?'s':''}`;
+
+  // Header
+  document.getElementById('hdr-proy').textContent = PROYECTO;
+  document.getElementById('hdr-av').textContent   = u.avance ? u.avance+'%' : '—';
+  document.getElementById('hdr-fecha').textContent = 'Al ' + fmtLong(u.fecha);
+  if (u.responsable) {
+    document.getElementById('hdr-resp').textContent = '👷 '+u.responsable;
+    document.getElementById('f-resp').textContent   = u.responsable;
+  }
+
+  // Barra datos
+  document.getElementById('pb-etapa').textContent  = u.etapa||'—';
+  document.getElementById('pb-fecha').textContent  = fmtShort(u.fecha);
+  document.getElementById('pb-clima').textContent  = u.clima||'—';
+  document.getElementById('pb-temp').textContent   = u.temp ? u.temp+'°C' : '—';
+  document.getElementById('pb-jornada').textContent= (u.horaIni&&u.horaFin) ? `${u.horaIni}–${u.horaFin}` : '—';
+  if (u.avance) {
+    const p = parseInt(u.avance);
+    document.getElementById('tf').style.width   = p+'%';
+    document.getElementById('tpct').textContent = p+'%';
+  }
+
+  // Resumen
+  document.getElementById('inf-badge').textContent = 'Informe #'+(u.numero||'—');
+  document.getElementById('r-total').textContent   = regs.length;
+  document.getElementById('r-inicio').textContent  = fmtShort(regs[regs.length-1].fecha);
+  const maxP = Math.max(...regs.map(r => (r.personal||[]).filter(p=>p[0]).length));
+  document.getElementById('r-personal').textContent = maxP || '—';
+
+  // Actividades
+  setTxt('s-act', u.actDescripcion);
+  if (u.actPendiente?.trim()) {
+    document.getElementById('pend-wrap').style.display = 'block';
+    setTxt('s-pend', u.actPendiente);
+  }
+
+  // Comparativo
+  if (u.actPlan || u.actReal) {
+    document.getElementById('s-comp').style.display = 'block';
+    document.getElementById('pct-plan').textContent = (u.actPlan||'—')+(u.actPlan?'%':'');
+    document.getElementById('pct-real').textContent = (u.actReal||'—')+(u.actReal?'%':'');
+  }
+
+  // Personal
+  const pers = (u.personal||[]).filter(p=>p[0]);
+  document.getElementById('t-personal').innerHTML = pers.length
+    ? pers.map(p=>`<tr><td>${p[0]||'—'}</td><td>${p[1]||'—'}</td><td>${p[2]||'—'}</td><td>${p[3]||'—'}</td><td>${p[4]||'—'}</td><td>${p[5]||'—'}</td></tr>`).join('')
+    : '<tr class="er"><td colspan="6">Sin personal registrado</td></tr>';
+
+  // Materiales
+  const mats = (u.materiales||[]).filter(m=>m[0]);
+  document.getElementById('t-mat').innerHTML = mats.length
+    ? mats.map(m => {
+        const mv = m[2]||'';
+        const bc = mv==='Ingreso'?'bi': mv==='Egreso'?'be':'bc';
+        return `<tr><td>${m[0]||'—'}</td><td><span class="badge ${bc}">${mv||'—'}</span></td><td>${m[3]||'—'}</td><td>${m[1]||'—'}</td><td>${m[4]||'—'}</td><td>${m[5]||'—'}</td></tr>`;
+      }).join('')
+    : '<tr class="er"><td colspan="6">Sin materiales registrados</td></tr>';
+
+  // Ocurrencias
+  const inc = u.incDescripcion;
+  document.getElementById('s-inc').textContent = inc?.trim() ? inc : 'Sin incidentes registrados.';
+  document.getElementById('s-vis').textContent = u.incVisitas?.trim() ? u.incVisitas : 'Sin visitas registradas.';
+  if (inc?.trim()) {
+    const b = document.getElementById('inc-box');
+    b.style.borderLeftColor = '#e53e3e';
+    b.style.background = '#FFF5F5';
+  }
+
+  // Fotos
+  const fotos = u.fotos||[];
+  document.getElementById('fg').innerHTML = fotos.length
+    ? fotos.map((f,i) => `<div class="fi"><img src="${f.src}" alt="Foto ${i+1}"><div class="fi-desc">${f.desc||'Fotografía '+(i+1)}</div></div>`).join('')
+    : '<div class="fe">Sin fotografías adjuntas en este registro.</div>';
+
+  // Historial
+  renderHistorial(regs);
+
+  document.getElementById('page').classList.add('vis');
+}
+
+// ── HISTORIAL ──
+function renderHistorial(regs) {
+  document.getElementById('ht-cnt').textContent = regs.length;
+  document.getElementById('hb').innerHTML = regs.map((r,i) => {
+    const av = r.avance ? parseInt(r.avance) : null;
+    const nf = (r.fotos||[]).length;
+    const np = (r.personal||[]).filter(p=>p[0]).length;
+    const nm = (r.materiales||[]).filter(m=>m[0]).length;
+    return `
+    <div class="hi">
+      <div class="hi-hdr" onclick="td(${i})">
+        <span class="hi-num">#${r.numero||'—'}</span>
+        <span class="hi-fecha">${fmtShort(r.fecha)}</span>
+        ${r.etapa?`<span class="badge bc" style="font-size:0.65rem">${r.etapa}</span>`:''}
+        <span class="hi-act">${r.actDescripcion ? r.actDescripcion.substring(0,80)+'…' : 'Sin descripción'}</span>
+        ${av!==null?`<div class="minibar"><div class="mbt"><div class="mbf" style="width:${av}%"></div></div><span class="hi-pct">${av}%</span></div>`:''}
+        <span class="hi-arr" id="ha${i}">▼</span>
+      </div>
+      <div class="hd" id="hd${i}">
+        <div class="hd-grid">
+          <div class="hd-item"><span class="hd-label">Clima</span><span class="hd-val">${r.clima||'—'}</span></div>
+          <div class="hd-item"><span class="hd-label">Temperatura</span><span class="hd-val">${r.temp?r.temp+'°C':'—'}</span></div>
+          <div class="hd-item"><span class="hd-label">Jornada</span><span class="hd-val">${r.horaIni&&r.horaFin?r.horaIni+'–'+r.horaFin:'—'}</span></div>
+          <div class="hd-item"><span class="hd-label">Personal</span><span class="hd-val">${np} persona${np!==1?'s':''}</span></div>
+          <div class="hd-item"><span class="hd-label">Materiales</span><span class="hd-val">${nm} ítem${nm!==1?'s':''}</span></div>
+          <div class="hd-item"><span class="hd-label">Fotos</span><span class="hd-val">${nf} foto${nf!==1?'s':''}</span></div>
+        </div>
+        ${r.actDescripcion?`<div class="hd-texto">${r.actDescripcion}</div>`:''}
+        ${r.actPendiente?`<div class="sub-label" style="margin:0 0 5px">Pendientes</div><div class="hd-texto" style="border-left-color:#ccc">${r.actPendiente}</div>`:''}
+        ${r.incDescripcion?`<div class="sub-label" style="margin:6px 0 5px;color:#e53e3e">⚠ Incidentes</div><div class="hd-texto" style="border-left-color:#e53e3e;background:#fff5f5">${r.incDescripcion}</div>`:''}
+        ${nf?`<div class="hd-fotos">${(r.fotos||[]).slice(0,6).map(f=>`<img src="${f.src}">`).join('')}${nf>6?`<div style="width:95px;height:71px;background:var(--f);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:#aaa">+${nf-6} más</div>`:''}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function td(i) {
+  document.getElementById('hd'+i).classList.toggle('op');
+  document.getElementById('ha'+i).classList.toggle('op');
+}
+function toggleHist() {
+  document.getElementById('hb').classList.toggle('op');
+  document.getElementById('ht-arr').classList.toggle('op');
+}
+
+// ── UTILS ──
+function setTxt(id,v,fb) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = (v&&v.trim()) ? v : (fb||'—');
+  if (!v||!v.trim()) el.classList.add('vacio');
+}
+function fmtShort(f) {
+  if (!f) return '—';
+  const [y,m,d] = String(f).split('-');
+  return (d&&m&&y) ? `${d}/${m}/${y}` : f;
+}
+function fmtLong(f) {
+  if (!f) return '—';
+  const [y,m,d] = String(f).split('-');
+  const ms = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${parseInt(d)} de ${ms[parseInt(m)-1]} de ${y}`;
+}
+function showErr(msg) {
+  document.getElementById('loading').style.display = 'none';
+  const e = document.getElementById('err');
+  document.getElementById('err-msg').innerHTML = msg;
+  e.style.display = 'block';
+}
+function setLtxt(t) { document.getElementById('ltxt').textContent = t; }
+
+init();
+</script>
+</body>
+</html>
