@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Instalación — Diario de Obra · Sanchez Gil +arquitectura</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --n:#F5A800;--no:#E08000;--nc:#FFD166;
+    --k:#1A1A1A;--go:#2E2E2E;--gm:#5A5A5A;
+    --gc:#E8E8E8;--f:#F4F0EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Barlow',sans-serif;background:var(--f);color:var(--k);line-height:1.6}
+
+  /* ── TOPBAR ── */
+  .topbar{background:var(--k);border-bottom:4px solid var(--n);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .tb-logo{display:flex;align-items:center;gap:12px}
+  .tb-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.2rem;color:var(--n);line-height:1}
+  .tb-sub{font-size:0.6rem;color:#666;letter-spacing:0.1em;text-transform:uppercase;margin-top:1px}
+  .tb-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;color:white;text-transform:uppercase;letter-spacing:0.05em}
+  .tb-print{background:var(--n);color:var(--k);border:none;padding:7px 16px;font-family:'Barlow',sans-serif;font-weight:700;font-size:0.78rem;border-radius:4px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase}
+  .tb-print:hover{background:var(--no)}
+
+  /* ── HERO ── */
+  .hero{background:var(--k);padding:48px 32px 40px;border-bottom:1px solid #2a2a2a}
+  .hero-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+  .hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.6rem;color:white;text-transform:uppercase;letter-spacing:-0.01em;line-height:1;margin-bottom:10px}
+  .hero h1 span{color:var(--n)}
+  .hero p{font-size:0.95rem;color:#888;max-width:520px;line-height:1.6}
+  .arch-diagram{display:flex;flex-direction:column;gap:4px;align-items:center}
+  .arch-box{background:#222;border:1px solid #333;border-radius:5px;padding:7px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.82rem;color:#ccc;text-transform:uppercase;letter-spacing:0.05em;text-align:center;white-space:nowrap}
+  .arch-box.hl{background:rgba(245,168,0,0.12);border-color:var(--n);color:var(--nc)}
+  .arch-arrow{color:#444;font-size:0.9rem;line-height:1}
+
+  /* ── BREADCRUMB / PASOS NAV ── */
+  .steps-nav{background:white;border-bottom:2px solid var(--gc);padding:0 32px;display:flex;align-items:stretch;overflow-x:auto}
+  .sn-item{display:flex;align-items:center;gap:8px;padding:12px 18px;font-size:0.78rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#aaa;text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all 0.18s;cursor:pointer}
+  .sn-item:hover{color:var(--no);border-bottom-color:rgba(245,168,0,0.3)}
+  .sn-num{background:var(--gc);color:var(--gm);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:900;flex-shrink:0}
+  .sn-item.active{color:var(--no);border-bottom-color:var(--n)}
+  .sn-item.active .sn-num{background:var(--n);color:var(--k)}
+
+  /* ── MAIN ── */
+  .wrap{max-width:900px;margin:0 auto;padding:36px 20px 80px}
+
+  /* ── SECCIONES ── */
+  .section{margin-bottom:48px;scroll-margin-top:90px}
+  .sec-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:12px;border-bottom:3px solid var(--k)}
+  .sec-num{background:var(--n);color:var(--k);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;width:36px;height:36px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.5rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--k)}
+  .sec-badge{margin-left:auto;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .sb-req{background:#FFEBEE;color:#C62828}
+  .sb-opt{background:#E8F5E9;color:#2E7D32}
+  .sb-once{background:#E3F2FD;color:#1565C0}
+
+  /* ── STEPS ── */
+  .steps{display:flex;flex-direction:column;gap:16px}
+  .step{display:flex;gap:16px;align-items:flex-start}
+  .step-num{background:var(--k);color:var(--nc);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.85rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+  .step-body{flex:1}
+  .step-title{font-weight:700;font-size:0.95rem;color:var(--k);margin-bottom:3px}
+  .step-desc{font-size:0.88rem;color:var(--go);line-height:1.6}
+
+  /* ── CODE BLOCK ── */
+  .code{background:var(--k);border-radius:6px;padding:14px 18px;margin:10px 0;overflow-x:auto;position:relative}
+  .code code{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--nc);line-height:1.6;white-space:pre}
+  .code-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#555;margin-bottom:6px}
+  .copy-btn{position:absolute;top:10px;right:12px;background:rgba(245,168,0,0.15);border:1px solid rgba(245,168,0,0.3);color:var(--nc);padding:3px 10px;border-radius:3px;font-family:'Barlow',sans-serif;font-size:0.7rem;font-weight:700;cursor:pointer;letter-spacing:0.04em;transition:all 0.18s}
+  .copy-btn:hover{background:rgba(245,168,0,0.3)}
+  .copy-btn.copied{color:#81C784;border-color:#81C784;background:rgba(46,125,50,0.15)}
+
+  /* ── INFO BOXES ── */
+  .info{border-radius:5px;padding:13px 16px;margin:12px 0;font-size:0.88rem;line-height:1.6;display:flex;gap:10px;align-items:flex-start}
+  .info-icon{flex-shrink:0;font-size:1rem;margin-top:1px}
+  .info.warn{background:#FFF8E1;border-left:3px solid #F5A800}
+  .info.tip{background:#E8F5E9;border-left:3px solid #2E7D32}
+  .info.danger{background:#FFEBEE;border-left:3px solid #e53e3e}
+  .info b{color:var(--k)}
+
+  /* ── CONFIG TABLE ── */
+  .cfg-table{width:100%;border-collapse:collapse;font-size:0.86rem;margin:14px 0}
+  .cfg-table th{background:var(--k);color:var(--nc);padding:9px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em}
+  .cfg-table td{padding:9px 14px;border-bottom:1px solid var(--gc);vertical-align:top}
+  .cfg-table tbody tr:nth-child(even){background:var(--f)}
+  .cfg-table tbody tr:last-child td{border-bottom:none}
+  .cfg-table .key{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--no);font-weight:700}
+
+  /* ── GRID CARDS ── */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .card{background:white;border-radius:6px;padding:16px 18px;border-top:3px solid var(--gc);box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+  .card.hl{border-top-color:var(--n)}
+  .card-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+  .card-body{font-size:0.85rem;color:var(--go);line-height:1.6}
+
+  /* ── TROUBLESHOOTING ── */
+  .trouble{display:flex;flex-direction:column;gap:12px}
+  .tr-item{background:white;border-radius:6px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+  .tr-q{background:var(--k);padding:11px 16px;font-weight:700;font-size:0.88rem;color:white;display:flex;align-items:center;gap:8px}
+  .tr-q::before{content:'?';background:var(--n);color:var(--k);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.82rem;flex-shrink:0}
+  .tr-a{padding:12px 16px;font-size:0.86rem;color:var(--go);line-height:1.7;border-left:3px solid var(--n)}
+
+  /* ── CHECKLIST FINAL ── */
+  .checklist{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+  .cl-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:white;border-radius:5px;font-size:0.88rem;color:var(--go);box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+  .cl-cb{width:18px;height:18px;border:2px solid var(--gc);border-radius:3px;flex-shrink:0;margin-top:1px;cursor:pointer;transition:all 0.18s}
+  .cl-cb:checked{background:var(--n);border-color:var(--n)}
+  label.cl-label{cursor:pointer;flex:1}
+
+  /* ── URL BUILDER ── */
+  .url-builder{background:var(--k);border-radius:6px;padding:18px 20px;margin:14px 0}
+  .ub-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#666;margin-bottom:10px}
+  .ub-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  .ub-row input{flex:1;min-width:140px;background:#222;border:1.5px solid #333;border-radius:4px;padding:7px 11px;font-family:'Barlow',sans-serif;font-size:0.83rem;color:#ccc;outline:none}
+  .ub-row input:focus{border-color:var(--n)}
+  .ub-row label{font-size:0.72rem;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap}
+  .ub-result{background:#111;border-radius:4px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--nc);word-break:break-all;line-height:1.5;min-height:40px}
+  .ub-copy{background:var(--n);color:var(--k);border:none;padding:7px 16px;border-radius:4px;font-family:'Barlow',sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;margin-top:8px;transition:background 0.18s}
+  .ub-copy:hover{background:var(--no)}
+
+  /* FOOTER */
+  .footer{background:var(--k);border-top:3px solid var(--n);padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+  .ft-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;color:var(--n)}
+  .ft-sub{font-size:0.65rem;color:#555;margin-top:1px}
+  .ft-ver{font-size:0.72rem;color:#555}
+
+  @media print{
+    .topbar,.steps-nav,.tb-print,#url-builder-section{display:none!important}
+    body{background:white}
+    .section{break-inside:avoid;page-break-inside:avoid}
+    .hero{background:#1a1a1a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">
+    <svg width="34" height="34" viewBox="0 0 48 48" fill="none">
+      <path d="M8 36L20 24L8 12H22L34 24L22 36H8Z" fill="#1A1A1A"/>
+      <path d="M10 14L22 26V36L10 24V14Z" fill="#FFD166"/>
+      <path d="M10 14L22 14L30 22L18 22L10 14Z" fill="#E08000"/>
+      <path d="M10 36L22 36L30 26L18 26L10 36Z" fill="#F5A800"/>
+    </svg>
+    <div><div class="tb-brand">Sanchez Gil +arquitectura</div><div class="tb-sub">Diario de Obra</div></div>
+  </div>
+  <span class="tb-title">Guía de Instalación del Sistema</span>
+  <button class="tb-print" onclick="window.print()">⬢ Imprimir / PDF</button>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>Guía de<br><span>Instalación</span></h1>
+      <p>Sistema completo de registro diario de obra. 4 archivos, 2 servicios, instalación única. Seguí los pasos en orden — todo el proceso toma menos de 20 minutos.</p>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <span style="background:rgba(245,168,0,0.15);color:var(--nc);padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700">⏱ ~20 minutos</span>
+        <span style="background:rgba(255,255,255,0.06);color:#888;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700">Sin costo</span>
+        <span style="background:rgba(255,255,255,0.06);color:#888;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700">Acceso desde cualquier PC</span>
+      </div>
+    </div>
+    <div class="arch-diagram">
+      <div class="arch-box hl">libro-diario-obra.html</div>
+      <div class="arch-arrow">↓ POST</div>
+      <div class="arch-box hl">Code.gs (Apps Script)</div>
+      <div class="arch-arrow">↕ lee / escribe</div>
+      <div class="arch-box hl">Google Sheets</div>
+      <div class="arch-arrow">↑ GET</div>
+      <div class="arch-box" style="display:flex;gap:6px;background:transparent;border:none;padding:2px">
+        <span class="arch-box" style="font-size:0.72rem;padding:5px 10px">base-datos</span>
+        <span class="arch-box" style="font-size:0.72rem;padding:5px 10px">reporte-cliente</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="steps-nav">
+  <a class="sn-item active" onclick="scrollTo('s1')"><span class="sn-num">1</span>Apps Script</a>
+  <a class="sn-item" onclick="scrollTo('s2')"><span class="sn-num">2</span>GitHub + Pages</a>
+  <a class="sn-item" onclick="scrollTo('s3')"><span class="sn-num">3</span>Conectar URL</a>
+  <a class="sn-item" onclick="scrollTo('s4')"><span class="sn-num">4</span>Primer registro</a>
+  <a class="sn-item" onclick="scrollTo('s5')"><span class="sn-num">5</span>URLs de clientes</a>
+  <a class="sn-item" onclick="scrollTo('s6')"><span class="sn-num">6</span>Actualizar</a>
+  <a class="sn-item" onclick="scrollTo('s7')"><span class="sn-num">?</span>Problemas</a>
+  <a class="sn-item" onclick="scrollTo('s8')"><span class="sn-num">✓</span>Checklist</a>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ PASO 1 ══ -->
+  <div class="section" id="s1">
+    <div class="sec-header">
+      <div class="sec-num">1</div>
+      <span class="sec-title">Google Apps Script</span>
+      <span class="sec-badge sb-once">Se hace una sola vez</span>
+    </div>
+
+    <p style="font-size:0.9rem;color:var(--go);margin-bottom:20px">Apps Script es el backend del sistema. Recibe los registros desde los HTMLs y los guarda en Google Sheets. También los sirve de vuelta cuando el reporte cliente o la base de datos los piden.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Crear el proyecto</div>
+          <div class="step-desc">Abrí <b>script.google.com</b> en tu navegador. Hacé clic en <b>"Nuevo proyecto"</b>. Nombralo <b>Diario de Obra — Sanchez Gil</b>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Pegar el código</div>
+          <div class="step-desc">Seleccioná todo el texto en el editor (Ctrl+A) y borralo. Abrí el archivo <b>Code.gs</b> que descargaste, copiá todo su contenido y pegalo en el editor. Guardá con <b>Ctrl+S</b>.</div>
+          <div class="info tip"><span class="info-icon">💡</span><div><b>Opcional:</b> Si ya tenés un Google Sheets existente donde querés guardar los datos, copiá el ID de su URL (<code>docs.google.com/spreadsheets/d/<b>ESTE-ID</b>/edit</code>) y pegalo en la línea <code>const SHEET_ID = 'PEGAR-AQUI'</code>. Si lo dejás vacío, el sistema crea el Sheets automáticamente.</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Implementar como Web App</div>
+          <div class="step-desc">En el menú superior hacé clic en <b>Implementar → Nueva implementación</b>. Luego:</div>
+          <div class="cfg-table" style="margin-top:10px">
+            <table class="cfg-table">
+              <thead><tr><th>Campo</th><th>Valor a seleccionar</th></tr></thead>
+              <tbody>
+                <tr><td>Tipo</td><td>Hacé clic en ⚙ → seleccioná <b>Aplicación web</b></td></tr>
+                <tr><td>Descripción</td><td><code>v1.0</code> (cualquier texto)</td></tr>
+                <tr><td>Ejecutar como</td><td><b>Yo</b> (tu cuenta de Google)</td></tr>
+                <tr><td>Quién tiene acceso</td><td><b>Cualquier persona</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="step-desc" style="margin-top:8px">Hacé clic en <b>Implementar</b>. Google va a pedirte que autorices permisos de Google Sheets y Drive — hacé clic en <b>Autorizar acceso</b> y aceptá todo.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Copiar la URL generada ← IMPORTANTE</div>
+          <div class="step-desc">Después de implementar, Apps Script muestra una <b>URL de aplicación web</b>. Copiá esa URL y guardala — la vas a usar en el Paso 3.</div>
+          <div class="code">
+            <div class="code-label">Formato de la URL</div>
+            <code>https://script.google.com/macros/s/AKfycb.../exec</code>
+          </div>
+          <div class="info warn"><span class="info-icon">⚠</span><div><b>Guardá esta URL</b> en un lugar accesible (un notepad, un mail a vos mismo). Si la perdés podés recuperarla desde Implementar → Administrar implementaciones.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PASO 2 ══ -->
+  <div class="section" id="s2">
+    <div class="sec-header">
+      <div class="sec-num">2</div>
+      <span class="sec-title">GitHub + GitHub Pages</span>
+      <span class="sec-badge sb-once">Se hace una sola vez</span>
+    </div>
+
+    <p style="font-size:0.9rem;color:var(--go);margin-bottom:20px">GitHub Pages te da hosting gratuito para los HTMLs, accesibles desde cualquier PC o celular con una URL fija.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Crear el repositorio</div>
+          <div class="step-desc">Abrí <b>github.com</b> (creá cuenta si no tenés — es gratis). Hacé clic en el botón verde <b>"New"</b> o en <b>"+"</b> → "New repository".</div>
+          <div class="cfg-table" style="margin-top:10px">
+            <table class="cfg-table">
+              <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+              <tbody>
+                <tr><td>Repository name</td><td><code class="key">diario-obra-sanchezgil</code></td></tr>
+                <tr><td>Visibility</td><td><b>Public</b> ← obligatorio para Pages gratuito</td></tr>
+                <tr><td>Add a README</td><td>No marcar</td></tr>
+                <tr><td>.gitignore / license</td><td>None</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="step-desc" style="margin-top:6px">Hacé clic en <b>"Create repository"</b>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Subir los archivos HTML</div>
+          <div class="step-desc">En la página del repo recién creado, hacé clic en <b>"uploading an existing file"</b>. Arrastrá estos 3 archivos juntos al área de drop:</div>
+          <div style="background:var(--f);border-radius:5px;padding:12px 16px;margin:10px 0;font-size:0.85rem;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--n);font-weight:700">→</span> <code>libro-diario-obra.html</code></div>
+            <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--n);font-weight:700">→</span> <code>reporte-cliente.html</code></div>
+            <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--n);font-weight:700">→</span> <code>base-datos-obra.html</code></div>
+            <div style="display:flex;align-items:center;gap:8px"><span style="color:#aaa;font-weight:700">→</span> <code>Code.gs</code> <span style="color:#aaa;font-size:0.78rem">(opcional, backup del código)</span></div>
+          </div>
+          <div class="step-desc">En el campo "Commit message" escribí: <code>primer deploy</code>. Hacé clic en <b>"Commit changes"</b>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Activar GitHub Pages</div>
+          <div class="step-desc">En el repo, andá a <b>Settings</b> (pestaña superior derecha). En el menú izquierdo, hacé clic en <b>Pages</b>. En "Build and deployment":</div>
+          <div class="cfg-table" style="margin-top:10px">
+            <table class="cfg-table">
+              <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+              <tbody>
+                <tr><td>Source</td><td>Deploy from a branch</td></tr>
+                <tr><td>Branch</td><td><b>main</b> · <b>/ (root)</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="step-desc" style="margin-top:6px">Hacé clic en <b>Save</b>. Esperá 2-3 minutos. Recargá la página — aparece un banner verde con tu URL:</div>
+          <div class="code">
+            <div class="code-label">Tu URL base (reemplazá TU-USUARIO)</div>
+            <code>https://TU-USUARIO.github.io/diario-obra-sanchezgil/</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PASO 3 ══ -->
+  <div class="section" id="s3">
+    <div class="sec-header">
+      <div class="sec-num">3</div>
+      <span class="sec-title">Conectar la URL del Apps Script</span>
+      <span class="sec-badge sb-once">Se hace una sola vez</span>
+    </div>
+
+    <p style="font-size:0.9rem;color:var(--go);margin-bottom:20px">Los HTMLs necesitan saber dónde está el Apps Script. La configuración se guarda en el navegador, así que solo hay que hacerlo una vez por dispositivo.</p>
+
+    <div class="grid-2">
+      <div class="card hl">
+        <div class="card-title">📝 libro-diario-obra.html</div>
+        <div class="card-body">
+          <ol style="padding-left:16px;line-height:2">
+            <li>Abrí el archivo desde tu URL de GitHub Pages</li>
+            <li>Andá a la pestaña <b>⚙ Config</b></li>
+            <li>Pegá la URL del Apps Script en el campo</li>
+            <li>Hacé clic en <b>"Probar conexión"</b></li>
+            <li>Tiene que aparecer ✅</li>
+          </ol>
+        </div>
+      </div>
+      <div class="card hl">
+        <div class="card-title">📊 base-datos-obra.html</div>
+        <div class="card-body">
+          <ol style="padding-left:16px;line-height:2">
+            <li>Abrí el archivo desde GitHub Pages</li>
+            <li>En el banner oscuro del tope, pegá la URL</li>
+            <li>Hacé clic en <b>"Conectar y cargar datos"</b></li>
+            <li>El indicador cambia a verde: <b>● Sheets</b></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="info tip" style="margin-top:4px"><span class="info-icon">💡</span><div><b>reporte-cliente.html</b> no necesita configuración manual — lee la URL automáticamente desde el mismo navegador una vez que la configuraste en el libro.</div></div>
+    <div class="info warn"><span class="info-icon">⚠</span><div>La configuración queda guardada <b>por navegador y por PC</b>. Si abrís los archivos en otra computadora, tenés que pegar la URL nuevamente. Es una operación de 10 segundos.</div></div>
+  </div>
+
+  <!-- ══ PASO 4 ══ -->
+  <div class="section" id="s4">
+    <div class="sec-header">
+      <div class="sec-num">4</div>
+      <span class="sec-title">Primer registro de prueba</span>
+      <span class="sec-badge sb-req">Verificar que todo funciona</span>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Cargar un registro de prueba</div>
+          <div class="step-desc">Abrí <code>libro-diario-obra.html</code>. En la pestaña <b>General</b>, completá:</div>
+          <div class="cfg-table" style="margin-top:8px">
+            <table class="cfg-table">
+              <thead><tr><th>Campo</th><th>Valor de prueba</th></tr></thead>
+              <tbody>
+                <tr><td>Proyecto</td><td><code class="key">Test Instalación</code></td></tr>
+                <tr><td>N° Informe</td><td><code class="key">001</code></td></tr>
+                <tr><td>Fecha</td><td>Hoy (ya viene cargada)</td></tr>
+                <tr><td>Etapa</td><td>Cualquiera del desplegable</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="step-desc" style="margin-top:8px">Escribí algo en la pestaña <b>Actividades</b>. Hacé clic en <b>💾 Guardar</b>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Verificar en Google Sheets</div>
+          <div class="step-desc">Abrí <b>Google Drive</b> y buscá el archivo <b>"Diario de Obra — Sanchez Gil +arquitectura"</b>. Tiene que existir con una hoja llamada <code>Test Instalacion</code> con tu registro en la fila 2.</div>
+          <div class="info tip"><span class="info-icon">💡</span><div>Si el Sheets no apareció, esperá 10 segundos y refrescá Drive. El Apps Script lo crea en el primer guardado.</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Verificar en base-datos-obra.html</div>
+          <div class="step-desc">Abrí <code>base-datos-obra.html</code> y hacé clic en <b>↻ Actualizar</b>. El registro de prueba tiene que aparecer en la tabla. El indicador dice <b>"● Sheets"</b> en verde.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Verificar el reporte cliente</div>
+          <div class="step-desc">Abrí esta URL en el navegador (reemplazá TU-USUARIO):</div>
+          <div class="code">
+            <code>https://TU-USUARIO.github.io/diario-obra-sanchezgil/reporte-cliente.html?proyecto=Test Instalación</code>
+          </div>
+          <div class="step-desc" style="margin-top:6px">Tiene que mostrar el reporte con el registro de prueba. ✅ Si todo funciona, el sistema está operativo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PASO 5 ══ -->
+  <div class="section" id="s5">
+    <div class="sec-header">
+      <div class="sec-num">5</div>
+      <span class="sec-title">Generar URLs para clientes</span>
+      <span class="sec-badge sb-req">Por cada proyecto nuevo</span>
+    </div>
+
+    <p style="font-size:0.9rem;color:var(--go);margin-bottom:16px">Cada cliente recibe una URL única y permanente que siempre muestra el estado actualizado de su obra. La URL se construye con el nombre exacto del proyecto.</p>
+
+    <div class="info warn"><span class="info-icon">⚠</span><div><b>El nombre del proyecto en la URL tiene que ser idéntico</b> al que cargás en el Libro Diario de Obra, incluyendo mayúsculas, acentos y espacios.</div></div>
+
+    <!-- URL Builder interactivo -->
+    <div class="url-builder" id="url-builder-section">
+      <div class="ub-title">Generador de URL de cliente</div>
+      <div class="ub-row">
+        <label>Tu usuario GitHub:</label>
+        <input type="text" id="ub-user" placeholder="tu-usuario" oninput="buildURL()">
+        <label>Nombre del repo:</label>
+        <input type="text" id="ub-repo" value="diario-obra-sanchezgil" oninput="buildURL()">
+      </div>
+      <div class="ub-row">
+        <label>Nombre exacto del proyecto:</label>
+        <input type="text" id="ub-proy" placeholder="Residencia Av. España 1245" oninput="buildURL()">
+      </div>
+      <div style="font-size:0.65rem;color:#555;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">URL generada para este cliente:</div>
+      <div class="ub-result" id="ub-result">— Completá los campos de arriba —</div>
+      <button class="ub-copy" onclick="copiarURL()">📋 Copiar URL</button>
+    </div>
+
+    <div class="info tip" style="margin-top:0"><span class="info-icon">💡</span><div><b>Forma más fácil:</b> abrí <code>libro-diario-obra.html</code> → pestaña <b>⚙ Config</b> → el link ya aparece generado automáticamente según el proyecto que tengas cargado → botón <b>📋 Copiar link</b>.</div></div>
+  </div>
+
+  <!-- ══ PASO 6 ══ -->
+  <div class="section" id="s6">
+    <div class="sec-header">
+      <div class="sec-num">6</div>
+      <span class="sec-title">Actualizar el sistema</span>
+      <span class="sec-badge sb-opt">Cuando haya cambios</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="card hl">
+        <div class="card-title">Actualizar los HTMLs</div>
+        <div class="card-body">
+          <ol style="padding-left:16px;line-height:2;font-size:0.85rem">
+            <li>Abrí el repo en github.com</li>
+            <li>Hacé clic en el archivo a editar</li>
+            <li>Ícono ✏ (lápiz) → pegá el nuevo contenido</li>
+            <li>Commit changes</li>
+            <li>GitHub Pages se actualiza en ~1 minuto</li>
+          </ol>
+        </div>
+      </div>
+      <div class="card hl">
+        <div class="card-title">Actualizar el Code.gs</div>
+        <div class="card-body">
+          <ol style="padding-left:16px;line-height:2;font-size:0.85rem">
+            <li>Abrí script.google.com → tu proyecto</li>
+            <li>Pegá el nuevo código</li>
+            <li><b>Implementar → Administrar implementaciones</b></li>
+            <li>Hacé clic en ✏ editar → <b>Nueva versión</b></li>
+            <li>Implementar</li>
+          </ol>
+          <div style="font-size:0.78rem;color:#2E7D32;margin-top:6px;font-weight:600">✓ La URL no cambia al crear nueva versión</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TROUBLESHOOTING ══ -->
+  <div class="section" id="s7">
+    <div class="sec-header">
+      <div class="sec-num">?</div>
+      <span class="sec-title">Solución de problemas</span>
+    </div>
+
+    <div class="trouble">
+      <div class="tr-item">
+        <div class="tr-q">"No se pudo conectar con Sheets" al guardar</div>
+        <div class="tr-a">
+          <b>1.</b> Verificá que la URL del Apps Script termine en <code>/exec</code> (no en <code>/dev</code>).<br>
+          <b>2.</b> Confirmá que la Web App tiene acceso configurado como <b>"Cualquier persona"</b> en Apps Script → Implementar → Administrar.<br>
+          <b>3.</b> Si modificaste el código, ¿creaste una <b>nueva versión</b> al reimplementar? (no basta con guardar el código).<br>
+          <b>4.</b> El dato llega a Sheets igual — el fetch modo <code>no-cors</code> no devuelve respuesta pero el POST se ejecuta. Verificá en el Sheets directamente.
+        </div>
+      </div>
+      <div class="tr-item">
+        <div class="tr-q">El Sheets no se creó automáticamente</div>
+        <div class="tr-a">
+          <b>1.</b> Verificá que autorizaste los permisos de Google Drive y Sheets cuando te lo pidió al implementar.<br>
+          <b>2.</b> Abrí Apps Script → menú <b>Ejecutar → getSpreadsheet</b> manualmente para que cree el archivo.<br>
+          <b>3.</b> Revisá la carpeta "Mi unidad" y también "Compartido conmigo" en Drive.
+        </div>
+      </div>
+      <div class="tr-item">
+        <div class="tr-q">El reporte del cliente muestra "Sin registros"</div>
+        <div class="tr-a">
+          <b>1.</b> El nombre del proyecto en la URL tiene que ser <b>idéntico</b> al cargado en el libro (mayúsculas, espacios, acentos).<br>
+          <b>2.</b> Usá la función "Copiar link" de la pestaña Config del libro para evitar errores de tipeo.<br>
+          <b>3.</b> Verificá que la URL del Apps Script esté configurada en el navegador del cliente (o que el sistema la lea desde localStorage).
+        </div>
+      </div>
+      <div class="tr-item">
+        <div class="tr-q">GitHub Pages muestra error 404</div>
+        <div class="tr-a">
+          <b>1.</b> Verificá que Pages esté activado en Settings → Pages.<br>
+          <b>2.</b> Confirmá que los archivos están en la rama <b>main</b> (no <code>master</code>).<br>
+          <b>3.</b> Esperá hasta 5 minutos después del primer deploy — a veces tarda.<br>
+          <b>4.</b> En Settings → Pages debería aparecer un banner verde con la URL activa.
+        </div>
+      </div>
+      <div class="tr-item">
+        <div class="tr-q">Apps Script pide autorización cada vez</div>
+        <div class="tr-a">
+          Esto pasa si la cuenta cambió o si los permisos expiraron. Abrí Apps Script → Implementar → Administrar implementaciones → editá → creá nueva versión → reautorizá. La URL del endpoint no cambia.
+        </div>
+      </div>
+      <div class="tr-item">
+        <div class="tr-q">Los datos se ven en caché pero no carga desde Sheets</div>
+        <div class="tr-a">
+          El sistema funciona en modo offline automáticamente — muestra los últimos datos cacheados. Para forzar la recarga desde Sheets, hacé clic en <b>↻ Actualizar</b> en base-datos-obra.html y verificá que tenés conexión a internet y la URL configurada correctamente.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CHECKLIST ══ -->
+  <div class="section" id="s8">
+    <div class="sec-header">
+      <div class="sec-num">✓</div>
+      <span class="sec-title">Checklist de instalación</span>
+    </div>
+
+    <p style="font-size:0.9rem;color:var(--go);margin-bottom:16px">Marcá cada ítem a medida que lo completás.</p>
+
+    <div class="checklist">
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c1"><label class="cl-label" for="c1">Proyecto creado en script.google.com con el código de Code.gs</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c2"><label class="cl-label" for="c2">Web App implementada con acceso "Cualquier persona"</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c3"><label class="cl-label" for="c3">URL del Apps Script copiada y guardada</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c4"><label class="cl-label" for="c4">Repositorio GitHub creado como Public</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c5"><label class="cl-label" for="c5">Los 3 archivos HTML subidos al repo</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c6"><label class="cl-label" for="c6">GitHub Pages activado (Settings → Pages → main)</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c7"><label class="cl-label" for="c7">URL del Apps Script configurada en libro-diario-obra.html (pestaña ⚙ Config)</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c8"><label class="cl-label" for="c8">URL del Apps Script configurada en base-datos-obra.html</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c9"><label class="cl-label" for="c9">Registro de prueba guardado exitosamente (toast ✅ verde)</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c10"><label class="cl-label" for="c10">Registro de prueba visible en Google Sheets</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c11"><label class="cl-label" for="c11">Registro visible en base-datos-obra.html con ● Sheets en verde</label></div>
+      <div class="cl-item"><input type="checkbox" class="cl-cb" id="c12"><label class="cl-label" for="c12">URL de reporte cliente verificada y funcional</label></div>
+    </div>
+
+    <div id="checklist-status" style="margin-top:16px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.1rem;color:var(--gm)">0 / 12 completados</div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div><div class="ft-brand">Sanchez Gil +arquitectura</div><div class="ft-sub">Sistema Diario de Obra · Guía de Instalación</div></div>
+  <div class="ft-ver">v2.0 · Generado por Logica</div>
+</div>
+
+<script>
+function scrollTo(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.sn-item').forEach(i=>i.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+// URL builder
+function buildURL(){
+  const user=document.getElementById('ub-user').value.trim();
+  const repo=document.getElementById('ub-repo').value.trim();
+  const proy=document.getElementById('ub-proy').value.trim();
+  const el=document.getElementById('ub-result');
+  if(!user||!proy){el.textContent='— Completá usuario y nombre de proyecto —';return;}
+  el.textContent=`https://${user}.github.io/${repo||'diario-obra-sanchezgil'}/reporte-cliente.html?proyecto=${encodeURIComponent(proy)}`;
+}
+function copiarURL(){
+  const txt=document.getElementById('ub-result').textContent;
+  if(txt.startsWith('—'))return;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=document.querySelector('.ub-copy');
+    b.textContent='✅ Copiada';
+    setTimeout(()=>b.textContent='📋 Copiar URL',2000);
+  });
+}
+
+// Copy code buttons
+document.querySelectorAll('.code').forEach(block=>{
+  const btn=document.createElement('button');
+  btn.className='copy-btn';btn.textContent='Copiar';
+  btn.onclick=()=>{
+    navigator.clipboard.writeText(block.querySelector('code').textContent);
+    btn.textContent='✓ Copiado';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied');},2000);
+  };
+  block.appendChild(btn);
+});
+
+// Checklist counter
+function updateChecklist(){
+  const total=document.querySelectorAll('.cl-cb').length;
+  const checked=document.querySelectorAll('.cl-cb:checked').length;
+  const el=document.getElementById('checklist-status');
+  el.textContent=`${checked} / ${total} completados`;
+  el.style.color=checked===total?'#2E7D32':checked>total/2?'#E08000':'var(--gm)';
+}
+document.querySelectorAll('.cl-cb').forEach(cb=>cb.addEventListener('change',updateChecklist));
+</script>
+</body>
+</html>
