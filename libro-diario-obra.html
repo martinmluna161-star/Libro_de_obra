@@ -22,14 +22,30 @@
   body { font-family: 'Barlow', sans-serif; background: var(--fondo); color: var(--negro); min-height: 100vh; }
 
   /* ── HEADER ── */
-  header { background: var(--negro); display: flex; align-items: stretch; border-bottom: 4px solid var(--naranja); }
-  .header-logo { background: var(--naranja); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header { background: var(--negro); display: flex; align-items: stretch; border-bottom: 4px solid var(--naranja); flex-wrap: wrap; }
+  .header-logo { background: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; border-right: 1px solid var(--gris-claro); }
   .brand-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--negro); line-height: 1; }
-  .brand-sub { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--negro); margin-top: 2px; }
-  .header-title { padding: 16px 28px; display: flex; flex-direction: column; justify-content: center; }
-  .header-title h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.5rem; color: white; text-transform: uppercase; letter-spacing: 0.03em; }
-  .header-title span { font-size: 0.75rem; color: var(--naranja-claro); }
-  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; padding: 0 20px; }
+  .brand-sub { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--naranja-oscuro); margin-top: 2px; }
+  .header-title { padding: 14px 22px; display: flex; flex-direction: column; justify-content: center; }
+  .header-title h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.4rem; color: white; text-transform: uppercase; letter-spacing: 0.03em; }
+  .header-title span { font-size: 0.72rem; color: var(--naranja-claro); }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 0 14px; flex-wrap: wrap; }
+
+  /* ── RESPONSIVE MOBILE ── */
+  @media (max-width: 700px) {
+    header { flex-direction: column; }
+    .header-logo { border-right: none; border-bottom: 1px solid var(--gris-claro); justify-content: center; }
+    .header-title { text-align: center; padding: 10px 16px; }
+    .header-actions { margin: 0; padding: 10px 14px; justify-content: center; width: 100%; border-top: 1px solid #333; gap: 6px; }
+    .tabs-bar { padding: 0 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tab-btn { padding: 10px 12px; font-size: 0.78rem; }
+    main { padding: 14px 12px 60px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .clima-options { gap: 6px; }
+    .btn { padding: 8px 12px; font-size: 0.75rem; }
+    .fotos-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .card-body { padding: 14px; }
+  }
 
   .btn { border: none; padding: 9px 18px; font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; border-radius: var(--radio); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.18s; white-space: nowrap; }
   .btn-primary { background: var(--naranja); color: var(--negro); }
@@ -132,6 +148,20 @@
   /* INFO BANNER */
   .info-banner { background: rgba(245,168,0,0.1); border-left: 4px solid var(--naranja); padding: 10px 16px; border-radius: 0 var(--radio) var(--radio) 0; font-size: 0.85rem; color: var(--gris-oscuro); margin-bottom: 18px; }
 
+  /* DEFINICIONES PENDIENTES */
+  .def-item { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: white; border-radius: 5px; border-left: 4px solid var(--naranja); margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .def-item-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .def-item textarea { min-height: 60px; border: 1.5px solid var(--gris-claro); }
+  .def-item textarea:focus { border-color: var(--naranja); outline: none; }
+  .def-urgencia { display: flex; gap: 6px; }
+  .def-urg-opt { display: none; }
+  .def-urg-opt + label { padding: 3px 10px; border: 1.5px solid var(--gris-claro); border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gris-medio); transition: all 0.15s; }
+  .def-urg-opt:checked + label { border-color: var(--naranja); background: rgba(245,168,0,0.1); color: var(--naranja-oscuro); }
+  .def-urg-opt[value="alta"]:checked + label { border-color: #e53e3e; background: #FFF5F5; color: #e53e3e; }
+  .def-num { background: var(--naranja); color: var(--negro); font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 0.9rem; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .btn-add-def { width: 100%; background: none; border: 2px dashed var(--naranja-claro); color: var(--naranja-oscuro); padding: 10px; border-radius: 5px; font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.18s; margin-top: 4px; }
+  .btn-add-def:hover { background: rgba(245,168,0,0.07); border-color: var(--naranja); }
+
   /* CONFIG PANEL */
   .config-panel { background: #111; border: 1px solid #333; border-radius: var(--radio); padding: 16px 20px; margin-bottom: 20px; }
   .config-panel h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; color: var(--naranja-claro); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
@@ -165,7 +195,10 @@
 
 <header>
   <div class="header-logo">
-    <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+    <img src="https://raw.githubusercontent.com/martinmluna161-star/Libro_de_obra/main/logo-sanchezgil.png"
+         onerror="this.style.display='none';document.getElementById('logo-svg-fallback').style.display='block'"
+         style="height:44px;width:auto" alt="Sanchez Gil">
+    <svg id="logo-svg-fallback" style="display:none" width="42" height="42" viewBox="0 0 48 48" fill="none">
       <path d="M8 36L20 24L8 12H22L34 24L22 36H8Z" fill="#1A1A1A"/>
       <path d="M10 14L22 26V36L10 24V14Z" fill="#FFD166"/>
       <path d="M10 14L22 14L30 22L18 22L10 14Z" fill="#E08000"/>
@@ -197,6 +230,7 @@
   <button class="tab-btn" onclick="showTab('tab-mdo', this)">M. de Obra</button>
   <button class="tab-btn" onclick="showTab('tab-materiales', this)">Materiales</button>
   <button class="tab-btn" onclick="showTab('tab-incidentes', this)">Ocurrencias</button>
+  <button class="tab-btn" onclick="showTab('tab-definiciones', this)">⚠ Definiciones</button>
   <button class="tab-btn" onclick="showTab('tab-fotos', this)">📷 Fotos</button>
   <button class="tab-btn" onclick="showTab('tab-config', this)">⚙ Config</button>
 </nav>
@@ -209,7 +243,7 @@
       <div class="card-header"><div class="card-icon">⚙</div><h2>Configuración de Conexión</h2></div>
       <div class="card-body">
         <div class="info-banner">
-          📌 Pegá aquí la URL de tu Google Apps Script Web App. Esta URL conecta el libro con tu Google Sheets y con el reporte para clientes.
+          📌 Pegá aquí la URL de tu Google Apps Script Web App para sincronizar con Google Sheets.
         </div>
         <div class="field-group" style="margin-bottom:16px">
           <label>URL del Apps Script Web App</label>
@@ -219,35 +253,36 @@
           </div>
           <div class="url-status empty" id="url-status">⬡ Configurá la URL para sincronizar con Google Sheets</div>
         </div>
-        <div class="field-group" style="margin-bottom:16px">
-          <label>Email del cliente (para el enlace de reporte)</label>
-          <input type="email" id="cliente-email" placeholder="cliente@mail.com" oninput="guardarURL()">
-          <div style="font-size:0.75rem;color:var(--gris-medio);margin-top:4px">Opcional. Se usa para mostrar el link de reporte correcto.</div>
-        </div>
-        <div style="background:var(--fondo);border-radius:var(--radio);padding:16px;margin-top:8px">
+        <div style="background:var(--fondo);border-radius:var(--radio);padding:16px">
           <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--gris-medio);margin-bottom:10px">Link del reporte para este proyecto</div>
           <div id="link-reporte" style="font-size:0.85rem;color:var(--gris-oscuro);word-break:break-all;background:white;padding:10px 12px;border-radius:4px;border:1px solid var(--gris-claro)">— Completá el nombre del proyecto primero —</div>
           <button class="btn btn-outline" style="margin-top:10px;font-size:0.78rem" onclick="copiarLink()">📋 Copiar link</button>
         </div>
       </div>
     </div>
+  </div>
 
+  <!-- ══ DEFINICIONES PENDIENTES ══ -->
+  <div id="tab-definiciones" class="tab-content">
     <div class="card">
-      <div class="card-header"><div class="card-icon">📋</div><h2>Instrucciones de Deploy</h2></div>
+      <div class="card-header"><div class="card-icon">⚠</div><h2>Definiciones Pendientes por el Cliente</h2></div>
       <div class="card-body">
-        <ol style="font-size:0.88rem;line-height:1.9;color:var(--gris-oscuro);padding-left:18px">
-          <li>Abrí <b>script.google.com</b> → Nuevo proyecto → pegá el contenido de <b>Code.gs</b></li>
-          <li>Menú <b>Implementar → Nueva implementación</b></li>
-          <li>Tipo: <b>Aplicación web</b> · Ejecutar como: <b>Yo</b> · Acceso: <b>Cualquier persona</b></li>
-          <li>Autorizá los permisos de Google Sheets y Drive</li>
-          <li>Copiá la URL generada y pegala arriba en "URL del Apps Script Web App"</li>
-          <li>Subí los tres archivos HTML a tu repositorio de GitHub</li>
-          <li>Activá GitHub Pages en Settings → Pages → rama main</li>
-          <li>El link del reporte para el cliente quedará del tipo:<br>
-            <code style="background:#111;color:var(--naranja-claro);padding:2px 8px;border-radius:3px;font-size:0.82rem">https://TU-USUARIO.github.io/REPO/reporte-cliente.html?proyecto=NombreProyecto</code>
-          </li>
-        </ol>
+        <div class="info-banner">
+          ⚠ Estas definiciones se resaltan en el reporte del cliente. Son puntos que <b>el cliente debe resolver</b> para continuar con la obra.
+        </div>
+        <div id="defs-lista"></div>
+        <button class="btn-add-def" onclick="addDefinicion()">+ Agregar definición pendiente</button>
       </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🎙</div><h2>Nota de Audio — Definiciones</h2></div>
+      <div class="card-body"><div class="audio-zone">
+        <div class="audio-controls"><button class="btn-record" id="rec-definiciones" onclick="toggleRecord('definiciones')"><span class="rec-dot"></span> Iniciar Grabación</button>
+          <span style="font-size:0.8rem;color:var(--gris-medio)">Dictá las definiciones pendientes...</span>
+        </div>
+        <div class="audio-list" id="audios-definiciones"></div>
+        <div class="transcription-box" id="trans-definiciones"><b>Transcripción:</b> <span id="trans-text-definiciones"></span></div>
+      </div></div>
     </div>
   </div>
 
@@ -572,24 +607,27 @@ function getTableData(id) {
 }
 
 // ══════════════════════════════════════════════
-// FOTOS
+// FOTOS — Se suben a Google Drive via Apps Script
 // ══════════════════════════════════════════════
-let fotosData = [];
+let fotosData = []; // { src, desc, name, driveUrl, driveId, estado }
 
 function cargarFotos(evt) {
   Array.from(evt.target.files).forEach(file => {
-    // Comprimir antes de subir
     const reader = new FileReader();
     reader.onload = e => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX = 800;
+        const MAX = 1200;
         let w = img.width, h = img.height;
         if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        fotosData.push({ src: canvas.toDataURL('image/jpeg', 0.75), desc: '', name: file.name });
+        fotosData.push({
+          src: canvas.toDataURL('image/jpeg', 0.80),
+          desc: '', name: file.name,
+          driveUrl: null, driveId: null, estado: 'pendiente'
+        });
         renderFotos();
       };
       img.src = e.target.result;
@@ -603,18 +641,68 @@ function renderFotos() {
   const grid = document.getElementById('fotos-grid');
   grid.innerHTML = '';
   fotosData.forEach((f, i) => {
-    const div = document.createElement('div'); div.className = 'foto-card';
-    div.innerHTML = `<img src="${f.src}">
-      <div class="foto-overlay"><input type="text" value="${f.desc}" placeholder="Descripción..."
-        style="background:transparent;border:none;color:white;width:100%;font-size:0.7rem;padding:0"
-        onchange="fotosData[${i}].desc=this.value"></div>
+    const div = document.createElement('div');
+    div.className = 'foto-card';
+    const estadoIcon = f.estado === 'subida' ? '☁️' : f.estado === 'error' ? '⚠️' : '📱';
+    const estadoColor = f.estado === 'subida' ? '#81C784' : f.estado === 'error' ? '#FC8181' : '#aaa';
+    div.innerHTML = `
+      <img src="${f.src}">
+      <div class="foto-overlay">
+        <input type="text" value="${f.desc}" placeholder="Descripción..."
+          style="background:transparent;border:none;color:white;width:100%;font-size:0.7rem;padding:0"
+          onchange="fotosData[${i}].desc=this.value">
+      </div>
+      <div style="position:absolute;top:4px;left:5px;font-size:0.68rem;color:${estadoColor};background:rgba(0,0,0,0.55);padding:2px 6px;border-radius:10px">${estadoIcon} ${f.estado === 'subida' ? 'Drive' : f.estado === 'error' ? 'Error' : 'Local'}</div>
       <button onclick="fotosData.splice(${i},1);renderFotos()" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.5);border:none;color:white;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:0.75rem">✕</button>`;
     grid.appendChild(div);
   });
-  const btn = document.createElement('button'); btn.className = 'btn-add-foto';
+  const btn = document.createElement('button');
+  btn.className = 'btn-add-foto';
   btn.innerHTML = '<span class="plus-icon">+</span><span style="font-size:0.78rem;color:var(--gris-medio);margin-top:3px">Agregar fotos</span>';
   btn.onclick = () => document.getElementById('foto-input').click();
   grid.appendChild(btn);
+}
+
+// Sube todas las fotos pendientes a Drive antes de guardar el registro
+async function subirFotosADrive(proyecto, numero, fecha) {
+  if (!APPS_SCRIPT_URL) return; // sin Apps Script no se puede subir
+  const pendientes = fotosData.filter(f => f.estado === 'pendiente');
+  if (!pendientes.length) return;
+
+  toast(`☁️ Subiendo ${pendientes.length} foto(s) a Drive...`);
+
+  for (const foto of pendientes) {
+    try {
+      const base64Data = foto.src.split(',')[1];
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'subir_foto',
+          proyecto,
+          numero,
+          fecha,
+          nombre: foto.name || `foto_${Date.now()}.jpg`,
+          base64: base64Data,
+          descripcion: foto.desc
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.url) {
+          foto.driveUrl = data.url;
+          foto.driveId  = data.id;
+          foto.estado   = 'subida';
+          foto.src      = data.url; // usar URL de Drive en lugar de base64
+        }
+      } else {
+        foto.estado = 'error';
+      }
+    } catch(e) {
+      foto.estado = 'error';
+    }
+  }
+  renderFotos();
 }
 
 // ══════════════════════════════════════════════
@@ -710,54 +798,24 @@ async function finalizarAudio(zona) {
 }
 
 async function transcribirConClaude(blob, mimeType) {
-  // Convertir blob a base64
+  if (!APPS_SCRIPT_URL) {
+    throw new Error('Configurá la URL del Apps Script en la pestaña ⚙ Config para activar la transcripción.');
+  }
   const base64 = await blobToBase64(blob);
   const base64Data = base64.split(',')[1];
-
-  // Determinar media_type compatible con la API
-  const mediaType = mimeType.startsWith('audio/webm') ? 'audio/webm'
-    : mimeType.startsWith('audio/ogg')  ? 'audio/ogg'
-    : mimeType.startsWith('audio/mp4')  ? 'audio/mp4'
-    : 'audio/webm';
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch(APPS_SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: `Transcribí exactamente lo que se dice en este audio. 
-Es el registro diario de una obra de construcción en Argentina. 
-Puede incluir términos técnicos de construcción, nombres de materiales, 
-cantidades, observaciones de obra y situaciones del día.
-Devolvé solo la transcripción, sin comentarios ni explicaciones adicionales.
-Si el audio no se entiende o está vacío, respondé solamente: "[Audio sin contenido audible]"`
-          },
-          {
-            type: 'document',
-            source: {
-              type: 'base64',
-              media_type: mediaType,
-              data: base64Data
-            }
-          }
-        ]
-      }]
+      action: 'transcribir_audio',
+      audioBase64: base64Data,
+      mimeType: mimeType || 'audio/webm'
     })
   });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error?.message || 'Error API');
-  }
-
+  if (!response.ok) throw new Error('Error al contactar Apps Script');
   const data = await response.json();
-  return data.content[0]?.text?.trim() || '[Sin transcripción]';
+  if (data.error) throw new Error(data.error);
+  return data.texto || '[Sin transcripción]';
 }
 
 function blobToBase64(blob) {
@@ -770,10 +828,100 @@ function blobToBase64(blob) {
 }
 
 // ══════════════════════════════════════════════
-// GUARDAR Y SINCRONIZAR CON SHEETS
+// DEFINICIONES PENDIENTES
 // ══════════════════════════════════════════════
+let definicionesData = [];
+
+function addDefinicion(texto = '', urgencia = 'media') {
+  const idx = definicionesData.length;
+  definicionesData.push({ texto, urgencia });
+  renderDefiniciones();
+}
+
+function renderDefiniciones() {
+  const lista = document.getElementById('defs-lista');
+  lista.innerHTML = '';
+  definicionesData.forEach((d, i) => {
+    const div = document.createElement('div');
+    div.className = 'def-item';
+    div.innerHTML = `
+      <span class="def-num">${i+1}</span>
+      <div class="def-item-body">
+        <textarea placeholder="Describí la definición que el cliente debe resolver..." rows="2"
+          onchange="definicionesData[${i}].texto=this.value">${d.texto}</textarea>
+        <div class="def-urgencia">
+          <input type="radio" name="urg${i}" id="urg${i}-alta" class="def-urg-opt" value="alta" ${d.urgencia==='alta'?'checked':''} onchange="definicionesData[${i}].urgencia='alta'">
+          <label for="urg${i}-alta">🔴 Alta</label>
+          <input type="radio" name="urg${i}" id="urg${i}-media" class="def-urg-opt" value="media" ${d.urgencia==='media'?'checked':''} onchange="definicionesData[${i}].urgencia='media'">
+          <label for="urg${i}-media">🟡 Media</label>
+          <input type="radio" name="urg${i}" id="urg${i}-baja" class="def-urg-opt" value="baja" ${d.urgencia==='baja'?'checked':''} onchange="definicionesData[${i}].urgencia='baja'">
+          <label for="urg${i}-baja">🟢 Baja</label>
+        </div>
+      </div>
+      <button class="btn-del" onclick="definicionesData.splice(${i},1);renderDefiniciones()" title="Eliminar">✕</button>`;
+    lista.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════
+// LIMPIAR FORMULARIO POST-GUARDADO
+// ══════════════════════════════════════════════
+function limpiarFormulario() {
+  // Campos de texto
+  ['g-numero','g-proyecto','g-responsable','g-avance','g-temp',
+   'g-hora-ini','g-hora-fin','act-descripcion','act-pendiente',
+   'act-plan','act-real','act-obs','inc-retraso','inc-causa',
+   'inc-descripcion','inc-visitas','inc-instrucciones','inc-seguridad']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = el.tagName === 'SELECT' ? el.options[0].value : '';
+    });
+
+  // Clima
+  document.querySelectorAll('input[name="clima"]').forEach(r => r.checked = false);
+
+  // Fecha → hoy
+  document.getElementById('g-fecha').value = new Date().toISOString().split('T')[0];
+
+  // Etapa
+  document.getElementById('g-etapa').value = '';
+
+  // Tablas → resetear con 1 fila vacía
+  ['personal','equipos','materiales'].forEach(t => {
+    document.getElementById('body-' + t).innerHTML = '';
+    addRow(t);
+  });
+
+  // Fotos
+  fotosData = [];
+  renderFotos();
+
+  // Definiciones
+  definicionesData = [];
+  renderDefiniciones();
+
+  // Audio boxes
+  ['general','actividades','mdo','materiales','incidentes','definiciones'].forEach(z => {
+    const list = document.getElementById('audios-' + z);
+    if (list) list.innerHTML = '';
+    const box = document.getElementById('trans-' + z);
+    if (box) { box.classList.remove('visible'); }
+    const span = document.getElementById('trans-text-' + z);
+    if (span) span.textContent = '';
+  });
+
+  // Volver a tab general
+  showTab('tab-general', document.querySelector('.tab-btn'));
+  actualizarLinkReporte();
+  toast('🗑 Formulario limpiado — listo para nuevo registro');
+}
 function recolectarDatos() {
   const climaEl = document.querySelector('input[name="clima"]:checked');
+  // Leer textos actuales de definiciones desde el DOM
+  document.querySelectorAll('#defs-lista .def-item').forEach((item, i) => {
+    const ta = item.querySelector('textarea');
+    if (ta && definicionesData[i]) definicionesData[i].texto = ta.value;
+  });
   return {
     numero: document.getElementById('g-numero').value || '',
     fecha: document.getElementById('g-fecha').value || '',
@@ -793,11 +941,18 @@ function recolectarDatos() {
     incVisitas: document.getElementById('inc-visitas').value || '',
     incInstrucciones: document.getElementById('inc-instrucciones').value || '',
     incSeguridad: document.getElementById('inc-seguridad').value || '',
+    definiciones_json: definicionesData.filter(d => d.texto.trim()),
     personal_json: getTableData('personal'),
     equipos_json: getTableData('equipos'),
     materiales_json: getTableData('materiales'),
     fotos_count: fotosData.length,
-    fotos_json: fotosData.map(f => ({ src: f.src, desc: f.desc })),
+    fotos_json: fotosData.map(f => ({
+      driveUrl: f.driveUrl || null,
+      driveId:  f.driveId  || null,
+      desc:     f.desc,
+      nombre:   f.name,
+      estado:   f.estado
+    })),
     timestamp: new Date().toISOString()
   };
 }
@@ -810,11 +965,22 @@ function setSyncStatus(state, text) {
 
 async function guardarYSincronizar() {
   const proyecto = document.getElementById('g-proyecto').value;
+  const numero   = document.getElementById('g-numero').value;
+  const fecha    = document.getElementById('g-fecha').value;
   if (!proyecto) { toast('⚠ Completá el nombre del proyecto primero'); return; }
 
+  setSyncStatus('saving', 'Preparando...');
+  document.getElementById('btn-guardar').disabled = true;
+
+  // 1. Subir fotos a Drive antes de guardar el registro
+  if (APPS_SCRIPT_URL) {
+    await subirFotosADrive(proyecto, numero, fecha);
+  }
+
+  // 2. Recolectar datos (fotos ya tienen driveUrl)
   const data = recolectarDatos();
 
-  // Guardar siempre en localStorage como respaldo
+  // 3. Guardar en localStorage como respaldo
   localStorage.setItem('diario_obra_ultimo', JSON.stringify(data));
   let registros = [];
   try { registros = JSON.parse(localStorage.getItem('diario_obra_registros')) || []; } catch(e) {}
@@ -822,31 +988,33 @@ async function guardarYSincronizar() {
   if (idx >= 0) registros[idx] = data; else registros.unshift(data);
   localStorage.setItem('diario_obra_registros', JSON.stringify(registros));
 
-  // Sincronizar con Apps Script / Sheets
+  // Sin Apps Script → guardar local y limpiar
   if (!APPS_SCRIPT_URL) {
     setSyncStatus('saved', 'Guardado local ✓');
-    toast('💾 Guardado localmente. Configurá Apps Script para sincronizar con Sheets.');
+    document.getElementById('btn-guardar').disabled = false;
+    toast('💾 Guardado localmente.');
+    setTimeout(() => limpiarFormulario(), 1200);
     return;
   }
 
-  setSyncStatus('saving', 'Sincronizando...');
-  document.getElementById('btn-guardar').disabled = true;
+  setSyncStatus('saving', 'Sincronizando con Sheets...');
 
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
+    await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'guardar_registro', data })
     });
     setSyncStatus('saved', 'Guardado en Sheets ✓');
-    toast('✅ Registro guardado en Google Sheets');
+    toast('✅ Registro y fotos guardados correctamente');
+    setTimeout(() => limpiarFormulario(), 1500);
   } catch(err) {
     setSyncStatus('error', 'Error de conexión');
     toast('❌ No se pudo conectar con Sheets. Guardado localmente.');
   } finally {
     document.getElementById('btn-guardar').disabled = false;
-    setTimeout(() => setSyncStatus('idle', 'Sin cambios nuevos'), 4000);
+    setTimeout(() => setSyncStatus('idle', 'Listo'), 5000);
   }
 }
 
@@ -882,6 +1050,7 @@ function toast(msg) {
 // ══════════════════════════════════════════════
 document.getElementById('g-fecha').value = new Date().toISOString().split('T')[0];
 addRow('personal'); addRow('equipos'); addRow('materiales');
+renderDefiniciones();
 
 // Restaurar URL guardada
 if (APPS_SCRIPT_URL) {
@@ -894,10 +1063,13 @@ actualizarLinkReporte();
 // Autoguardado local cada 60 segundos
 setInterval(() => {
   const proyecto = document.getElementById('g-proyecto').value;
-  if (proyecto) {
-    localStorage.setItem('diario_obra_ultimo', JSON.stringify(recolectarDatos()));
-  }
+  if (proyecto) localStorage.setItem('diario_obra_ultimo', JSON.stringify(recolectarDatos()));
 }, 60000);
+
+// ── TRANSCRIPCIÓN VIA APPS SCRIPT (Google Speech-to-Text) ──
+// El Apps Script actúa como proxy hacia la API de Google Speech-to-Text.
+// No requiere Google Cloud Console — está disponible directo con cuenta Google.
+// La función transcribirConClaude() ya está definida arriba y usa este flujo.
 </script>
 </body>
 </html>
