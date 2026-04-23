@@ -618,9 +618,18 @@ function renderFotos() {
 }
 
 // ══════════════════════════════════════════════
-// AUDIO
+// AUDIO + TRANSCRIPCIÓN VÍA CLAUDE API
 // ══════════════════════════════════════════════
 let mediaRecorders = {}, audioChunks = {}, streams = {}, recording = {};
+
+// Mapa: zona → campo de texto donde volcar la transcripción
+const MAPA_CAMPOS = {
+  general:     null,           // no vuelca a un campo específico, queda en el box
+  actividades: 'act-descripcion',
+  mdo:         null,
+  materiales:  null,
+  incidentes:  'inc-descripcion'
+};
 
 async function toggleRecord(zona) {
   const btn = document.getElementById('rec-' + zona);
@@ -628,51 +637,136 @@ async function toggleRecord(zona) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streams[zona] = stream;
-      const mr = new MediaRecorder(stream);
-      mediaRecorders[zona] = mr; audioChunks[zona] = [];
-      mr.ondataavailable = e => audioChunks[zona].push(e.data);
+      const mr = new MediaRecorder(stream, { mimeType: getSupportedMimeType() });
+      mediaRecorders[zona] = mr;
+      audioChunks[zona] = [];
+      mr.ondataavailable = e => { if (e.data.size > 0) audioChunks[zona].push(e.data); };
       mr.onstop = () => finalizarAudio(zona);
-      mr.start(); recording[zona] = true;
+      mr.start(250); // chunk cada 250ms para no perder datos
+      recording[zona] = true;
       btn.classList.add('recording');
       btn.innerHTML = '<span class="rec-dot"></span> Detener grabación';
-    } catch(e) { alert('No se pudo acceder al micrófono. Verificá los permisos del navegador.'); }
+    } catch(e) {
+      alert('No se pudo acceder al micrófono. Verificá los permisos del navegador.');
+    }
   } else {
-    mediaRecorders[zona].stop(); streams[zona].getTracks().forEach(t => t.stop());
-    recording[zona] = false; btn.classList.remove('recording');
+    mediaRecorders[zona].stop();
+    streams[zona].getTracks().forEach(t => t.stop());
+    recording[zona] = false;
+    btn.classList.remove('recording');
     btn.innerHTML = '<span class="rec-dot"></span> Iniciar Grabación';
   }
 }
 
-function finalizarAudio(zona) {
-  const blob = new Blob(audioChunks[zona], { type: 'audio/webm' });
-  const url = URL.createObjectURL(blob);
+function getSupportedMimeType() {
+  const tipos = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
+  return tipos.find(t => MediaRecorder.isTypeSupported(t)) || '';
+}
+
+async function finalizarAudio(zona) {
+  const mimeType = getSupportedMimeType() || 'audio/webm';
+  const blob = new Blob(audioChunks[zona], { type: mimeType });
+  const url  = URL.createObjectURL(blob);
+
+  // ── Agregar player a la lista ──
   const list = document.getElementById('audios-' + zona);
-  const div = document.createElement('div'); div.className = 'audio-item';
-  const num = list.children.length + 1;
-  div.innerHTML = `<span style="font-weight:700;color:var(--naranja-oscuro);min-width:20px">${num}.</span>
-    <audio controls src="${url}"></audio>
+  const num  = list.children.length + 1;
+  const div  = document.createElement('div');
+  div.className = 'audio-item';
+  div.id = `audio-item-${zona}-${num}`;
+  div.innerHTML = `
+    <span style="font-weight:700;color:var(--naranja-oscuro);min-width:20px">${num}.</span>
+    <audio controls src="${url}" style="height:30px;flex:1"></audio>
+    <span class="trans-estado" id="te-${zona}-${num}" style="font-size:0.72rem;color:#aaa;white-space:nowrap">⏳ Transcribiendo...</span>
     <button onclick="this.parentElement.remove()" class="btn-del">✕</button>`;
   list.appendChild(div);
 
-  // Transcripción via Web Speech
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const r = new SR(); r.lang = 'es-AR';
-    r.onresult = e => {
-      const texto = e.results[0][0].transcript;
-      const span = document.getElementById('trans-text-' + zona);
-      span.textContent = (span.textContent ? span.textContent + ' ' : '') + texto;
-      document.getElementById('trans-' + zona).classList.add('visible');
-      // Auto-fill
-      const mapaFill = { actividades: 'act-descripcion', incidentes: 'inc-descripcion' };
-      const campo = mapaFill[zona];
-      if (campo) {
-        const el = document.getElementById(campo);
-        el.value = el.value ? el.value + '\n' + texto : texto;
-      }
-    };
-    try { r.start(); } catch(e) {}
+  // ── Transcribir con Claude ──
+  try {
+    const texto = await transcribirConClaude(blob, mimeType);
+    document.getElementById(`te-${zona}-${num}`).textContent = '✅ Transcripto';
+
+    // Mostrar en el box de transcripción
+    const box  = document.getElementById('trans-' + zona);
+    const span = document.getElementById('trans-text-' + zona);
+    const actual = span.textContent;
+    span.textContent = actual ? actual + '\n' + texto : texto;
+    box.classList.add('visible');
+
+    // Volcar al campo de texto correspondiente
+    const campo = MAPA_CAMPOS[zona];
+    if (campo) {
+      const el = document.getElementById(campo);
+      if (el) el.value = el.value ? el.value + '\n\n' + texto : texto;
+    }
+
+    toast('🎙 Transcripción completada');
+
+  } catch(err) {
+    console.error('Error transcripción:', err);
+    document.getElementById(`te-${zona}-${num}`).textContent = '❌ Error al transcribir';
+    toast('❌ No se pudo transcribir. Verificá la conexión.');
   }
+}
+
+async function transcribirConClaude(blob, mimeType) {
+  // Convertir blob a base64
+  const base64 = await blobToBase64(blob);
+  const base64Data = base64.split(',')[1];
+
+  // Determinar media_type compatible con la API
+  const mediaType = mimeType.startsWith('audio/webm') ? 'audio/webm'
+    : mimeType.startsWith('audio/ogg')  ? 'audio/ogg'
+    : mimeType.startsWith('audio/mp4')  ? 'audio/mp4'
+    : 'audio/webm';
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: `Transcribí exactamente lo que se dice en este audio. 
+Es el registro diario de una obra de construcción en Argentina. 
+Puede incluir términos técnicos de construcción, nombres de materiales, 
+cantidades, observaciones de obra y situaciones del día.
+Devolvé solo la transcripción, sin comentarios ni explicaciones adicionales.
+Si el audio no se entiende o está vacío, respondé solamente: "[Audio sin contenido audible]"`
+          },
+          {
+            type: 'document',
+            source: {
+              type: 'base64',
+              media_type: mediaType,
+              data: base64Data
+            }
+          }
+        ]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error?.message || 'Error API');
+  }
+
+  const data = await response.json();
+  return data.content[0]?.text?.trim() || '[Sin transcripción]';
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror  = reject;
+    reader.readAsDataURL(blob);
+  });
 }
 
 // ══════════════════════════════════════════════
