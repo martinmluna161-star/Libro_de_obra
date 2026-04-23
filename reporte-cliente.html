@@ -349,17 +349,6 @@
       </div>
     </div>
 
-    <!-- FOTOS ÚLTIMO DÍA -->
-    <div class="sec">
-      <div class="sec-head">
-        <div class="sec-num">📷</div>
-        <span class="sec-title">Evidencia Visual — Último Día</span>
-      </div>
-      <div class="fg" id="fg">
-        <div class="fe">Sin fotografías adjuntas en este registro.</div>
-      </div>
-    </div>
-
     <!-- FIRMA -->
     <div class="firma">
       <div class="fb">
@@ -384,6 +373,29 @@
         <span class="ht-arr" id="ht-arr">▼</span>
       </div>
       <div class="hb" id="hb"></div>
+    </div>
+
+    <!-- EVIDENCIA VISUAL — AL FINAL DEL REPORTE -->
+    <div style="margin-top:36px">
+      <div style="background:var(--k);border-radius:6px 6px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--n)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="background:var(--n);color:var(--k);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.82rem;padding:3px 10px;border-radius:3px">📷</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;color:white;text-transform:uppercase;letter-spacing:0.05em">Evidencia Visual del Proyecto</span>
+        </div>
+        <span style="font-size:0.75rem;color:#888" id="fotos-total-label">0 fotografías</span>
+      </div>
+      <div style="border:1px solid var(--gc);border-top:none;border-radius:0 0 6px 6px;padding:20px;background:white">
+        <!-- Fotos último registro -->
+        <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--gm);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gc)" id="fotos-ult-label">Último registro</div>
+        <div class="fg" id="fg" style="margin-bottom:20px">
+          <div class="fe">Sin fotografías en el último registro.</div>
+        </div>
+        <!-- Fotos históricas (todos los registros anteriores que tienen fotos) -->
+        <div id="fotos-historicas-wrap" style="display:none">
+          <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--gm);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gc)">Registros anteriores</div>
+          <div id="fotos-historicas"></div>
+        </div>
+      </div>
     </div>
 
   </div><!-- /body -->
@@ -543,11 +555,34 @@ function render(regs) {
     b.style.background = '#FFF5F5';
   }
 
-  // Fotos
+  // Fotos último día
   const fotos = u.fotos||[];
   document.getElementById('fg').innerHTML = fotos.length
     ? fotos.map((f,i) => `<div class="fi"><img src="${f.src}" alt="Foto ${i+1}"><div class="fi-desc">${f.desc||'Fotografía '+(i+1)}</div></div>`).join('')
-    : '<div class="fe">Sin fotografías adjuntas en este registro.</div>';
+    : '<div class="fe">Sin fotografías adjuntas en el último registro.</div>';
+
+  // Label último registro con fecha
+  document.getElementById('fotos-ult-label').textContent = `Último registro — ${fmtShort(u.fecha)}`;
+
+  // Fotos históricas (registros anteriores que tienen fotos)
+  const registrosConFotos = regs.slice(1).filter(r => r.fotos && r.fotos.length > 0);
+  const totalFotos = regs.reduce((s,r) => s + (r.fotos||[]).length, 0);
+  document.getElementById('fotos-total-label').textContent = `${totalFotos} fotografía${totalFotos !== 1 ? 's' : ''} · ${regs.length} registro${regs.length !== 1 ? 's' : ''}`;
+
+  if (registrosConFotos.length) {
+    document.getElementById('fotos-historicas-wrap').style.display = 'block';
+    document.getElementById('fotos-historicas').innerHTML = registrosConFotos.map(r => `
+      <div style="margin-bottom:20px">
+        <div style="font-size:0.72rem;font-weight:700;color:var(--gm);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+          <span style="background:var(--f);border:1px solid var(--gc);padding:2px 8px;border-radius:3px">Informe #${r.numero||'—'}</span>
+          <span>${fmtShort(r.fecha)}</span>
+          ${r.etapa ? `<span style="background:rgba(245,168,0,0.1);color:var(--no);padding:2px 8px;border-radius:3px;font-size:0.65rem">${r.etapa}</span>` : ''}
+        </div>
+        <div class="fg">
+          ${r.fotos.map((f,i) => `<div class="fi"><img src="${f.src}" alt="Foto ${i+1}"><div class="fi-desc">${f.desc||'Fotografía '+(i+1)}</div></div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
 
   // Historial
   renderHistorial(regs);
