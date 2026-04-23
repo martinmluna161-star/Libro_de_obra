@@ -86,6 +86,12 @@ function doPost(e) {
     if (action === 'eliminar_registro')
       return corsResponse({ ok: true, result: eliminarRegistro(payload.proyecto, payload.numero) });
 
+    if (action === 'transcribir_audio')
+      return corsResponse(transcribirAudio(payload.audioBase64, payload.mimeType));
+
+    if (action === 'subir_foto')
+      return corsResponse(subirFotoADrive(payload));
+
     return corsResponse({ error: 'Acción no reconocida' });
 
   } catch(err) {
@@ -283,6 +289,126 @@ function actualizarUltimoRegistroIndice(ss, nombreProyecto, fecha, totalRegs) {
       idx.getRange(i+4,5).setValue(totalRegs);
       break;
     }
+  }
+}
+
+// ── SUBIR FOTO A GOOGLE DRIVE ────────────────────────────
+function subirFotoADrive(payload) {
+  try {
+    const { proyecto, numero, fecha, nombre, base64, descripcion } = payload;
+
+    // Carpeta raíz del sistema
+    const CARPETA_RAIZ = 'Diario de Obra — Sanchez Gil +arquitectura';
+    let carpetaRaiz = obtenerOCrearCarpeta(CARPETA_RAIZ, DriveApp.getRootFolder());
+
+    // Subcarpeta por proyecto
+    const nombreProyecto = slugify(proyecto) || 'proyecto-sin-nombre';
+    let carpetaProyecto = obtenerOCrearCarpeta(nombreProyecto, carpetaRaiz);
+
+    // Subcarpeta por informe (proyecto/fecha-numero)
+    const nombreInforme = `${fecha || 'sin-fecha'}_inf-${numero || '000'}`;
+    let carpetaInforme = obtenerOCrearCarpeta(nombreInforme, carpetaProyecto);
+
+    // Crear el archivo imagen
+    const bytes = Utilities.base64Decode(base64);
+    const blob  = Utilities.newBlob(bytes, 'image/jpeg', nombre || 'foto.jpg');
+    const file  = carpetaInforme.createFile(blob);
+
+    // Hacer el archivo accesible con link
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    const fileId  = file.getId();
+    const viewUrl = `https://drive.google.com/file/d/${fileId}/view`;
+    const thumbUrl= `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+
+    // Agregar descripción como propiedad del archivo
+    if (descripcion) {
+      file.setDescription(descripcion);
+    }
+
+    return { ok: true, id: fileId, url: viewUrl, thumb: thumbUrl };
+
+  } catch(err) {
+    Logger.log('Error subir foto: ' + err.message);
+    return { error: err.message };
+  }
+}
+
+function obtenerOCrearCarpeta(nombre, padre) {
+  const iter = padre.getFoldersByName(nombre);
+  if (iter.hasNext()) return iter.next();
+  return padre.createFolder(nombre);
+}
+
+// ── TRANSCRIPCIÓN DE AUDIO ────────────────────────────────
+// Google Speech-to-Text v1 — disponible directo desde Apps Script
+// sin necesitar Google Cloud Console ni facturación
+function transcribirAudio(audioBase64, mimeType) {
+  try {
+    // Determinar encoding según el mimeType
+    const encoding = mimeType && mimeType.includes('mp4') ? 'MP3'
+      : mimeType && mimeType.includes('ogg') ? 'OGG_OPUS'
+      : 'WEBM_OPUS'; // default webm/opus
+
+    const token = ScriptApp.getOAuthToken();
+    const url = 'https://speech.googleapis.com/v1/speech:recognize';
+
+    const body = {
+      config: {
+        encoding: encoding,
+        sampleRateHertz: 48000,
+        languageCode: 'es-AR',
+        alternativeLanguageCodes: ['es-ES', 'es-MX'],
+        enableAutomaticPunctuation: true,
+        model: 'default',
+        speechContexts: [{
+          phrases: [
+            'hormigón', 'mampostería', 'encofrado', 'ferrería', 'albañil',
+            'capataz', 'plomería', 'electricidad', 'estructura', 'fundaciones',
+            'zapata', 'columna', 'viga', 'losa', 'revoque', 'contrapiso',
+            'metros cuadrados', 'metros cúbicos', 'bolsas de cemento',
+            'hierro', 'arena', 'gravilla', 'cal', 'ladrillo', 'bloque',
+            'Sanchez Gil', 'arquitectura', 'obra', 'proyecto', 'plano',
+            'subcontratista', 'proveedor', 'remito', 'factura'
+          ]
+        }]
+      },
+      audio: {
+        content: audioBase64
+      }
+    };
+
+    const response = UrlFetchApp.fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      payload: JSON.stringify(body),
+      muteHttpExceptions: true
+    });
+
+    const result = JSON.parse(response.getContentText());
+
+    if (result.error) {
+      Logger.log('Speech API error: ' + JSON.stringify(result.error));
+      return { error: result.error.message, texto: null };
+    }
+
+    if (!result.results || !result.results.length) {
+      return { texto: '[Audio sin contenido audible]' };
+    }
+
+    const texto = result.results
+      .map(r => r.alternatives[0].transcript)
+      .join(' ')
+      .trim();
+
+    return { texto, ok: true };
+
+  } catch(err) {
+    Logger.log('Error transcripción: ' + err.message);
+    return { error: err.message, texto: null };
   }
 }
 
